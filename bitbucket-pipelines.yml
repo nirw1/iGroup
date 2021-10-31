@@ -1,0 +1,19 @@
+image: maven:latest
+
+pipelines:
+  default:
+    - parallel:
+      - step:
+          name: Run checkstyle
+          script:
+              # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
+            - pipe: atlassian/checkstyle-report:0.3.0
+              variables:
+                REPORT_FAIL_SEVERITY: 'error'
+                CHECKSTYLE_REPORT_TITLE: 'my-report'  
+      - step:
+          name: Security Scan
+          script:
+            # Run a security scan for sensitive data.
+            # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+            - pipe: atlassian/git-secrets-scan:0.4.3
