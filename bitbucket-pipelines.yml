@@ -19,6 +19,7 @@ pipelines:
               variables:
                 REPORT_FAIL_SEVERITY: 'error'
                 CHECKSTYLE_REPORT_TITLE: 'my-report'
+                DEBUG: "true"
             - pipe: atlassian/bitbucket-build-statistics:0.2.1
               variables:
                 BITBUCKET_USERNAME: $BITBUCKET_USERNAME
