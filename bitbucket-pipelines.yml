@@ -10,7 +10,11 @@ pipelines:
             - pipe: atlassian/checkstyle-report:0.3.0
               variables:
                 REPORT_FAIL_SEVERITY: 'error'
-                CHECKSTYLE_REPORT_TITLE: 'my-report'  
+                CHECKSTYLE_REPORT_TITLE: 'my-report'
+            - pipe: atlassian/bitbucket-build-statistics:0.2.1
+              variables:
+                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
       - step:
           name: Security Scan
           script:
