@@ -1,6 +1,7 @@
-package Boundaries;
+package boundaries;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import integrative.CreatedBy;
@@ -18,7 +19,11 @@ public class InstanceBoundary {
 	private Map<String, Object> instanceAttributes;
 	
 	public InstanceBoundary() {
+		instanceId = new InstanceId();
 		createdTimestamp = new Date();
+		createdBy = new CreatedBy();
+		location = new Location();
+		instanceAttributes = new HashMap<String, Object>();
 	}
 	
 	public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, 
