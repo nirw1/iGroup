@@ -4,7 +4,7 @@ public class CreatedBy {
 	private UserId userId;
 	
 	public CreatedBy() {
-		
+		userId = new UserId();
 	}
 	
 	public CreatedBy(UserId userId) {
