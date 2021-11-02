@@ -1,4 +1,4 @@
-package Boundaries;
+package boundaries;
 
 import integrative.UserId;
 
