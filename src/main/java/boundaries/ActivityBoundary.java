@@ -4,13 +4,11 @@ import java.util.Date;
 import java.util.Map;
 
 import integrative.CreatedBy;
-import integrative.Instance;
 import integrative.InstanceId;
 
 public class ActivityBoundary {
 	private InstanceId activityId;
 	private String type;
-	private Instance instance;
 	private Date createdTimestamp;
 	private CreatedBy invokedBy;
 	private Map<String, Object> activityAttributes;
@@ -19,12 +17,10 @@ public class ActivityBoundary {
 		createdTimestamp = new Date();
 	}
 
-	public ActivityBoundary(InstanceId activityId, String type, Instance instance,
-			CreatedBy invokedBy, Map<String, Object> activityAttributes) {
+	public ActivityBoundary(InstanceId activityId, String type, CreatedBy invokedBy, Map<String, Object> activityAttributes) {
 		this();
 		this.activityId = activityId;
 		this.type = type;
-		this.instance = instance;
 		this.invokedBy = invokedBy;
 		this.activityAttributes = activityAttributes;
 	}
@@ -43,14 +39,6 @@ public class ActivityBoundary {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Instance getInstance() {
-		return instance;
-	}
-
-	public void setInstance(Instance instance) {
-		this.instance = instance;
 	}
 
 	public Date getCreatedTimestamp() {
