@@ -40,8 +40,8 @@ public class AdminController {
 	@RequestMapping(path = "/iob/admin/activities/{userDomain}/{userEmail}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ActivityBoundary[] getActivities() {
 		ActivityBoundary arr[] = new ActivityBoundary[2];
-		arr[0] = new ActivityBoundary(null, "type-1", null, null);
-		arr[1] = new ActivityBoundary(null, "type-2", null, null);
+		arr[0] = new ActivityBoundary(null, null, "type-1", null, null);
+		arr[1] = new ActivityBoundary(null, null, "type-2", null, null);
 		return arr;
 	}
 

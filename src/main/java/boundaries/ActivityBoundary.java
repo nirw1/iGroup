@@ -8,6 +8,7 @@ import integrative.InstanceId;
 
 public class ActivityBoundary {
 	private InstanceId activityId;
+	private InstanceBoundary instance;
 	private String type;
 	private Date createdTimestamp;
 	private CreatedBy invokedBy;
@@ -17,12 +18,21 @@ public class ActivityBoundary {
 		createdTimestamp = new Date();
 	}
 
-	public ActivityBoundary(InstanceId activityId, String type, CreatedBy invokedBy, Map<String, Object> activityAttributes) {
+	public ActivityBoundary(InstanceId activityId, InstanceBoundary instance, String type, CreatedBy invokedBy, Map<String, Object> activityAttributes) {
 		this();
 		this.activityId = activityId;
+		this.instance = instance;
 		this.type = type;
 		this.invokedBy = invokedBy;
 		this.activityAttributes = activityAttributes;
+	}
+
+	public InstanceBoundary getInstance() {
+		return instance;
+	}
+
+	public void setInstance(InstanceBoundary instance) {
+		this.instance = instance;
 	}
 
 	public InstanceId getActivityId() {
