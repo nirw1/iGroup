@@ -9,15 +9,9 @@ import boundaries.ActivityBoundary;
 
 public class ActivitiesController {
 
-	
-	@RequestMapping(
-			path = "/iob/activities",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/iob/activities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ActivityBoundary createActivity(@RequestBody ActivityBoundary activityFromClient) {
 		return activityFromClient;
 	}
-	
-}
 
+}
