@@ -3,12 +3,13 @@ package boundaries;
 import java.util.Date;
 import java.util.Map;
 
+import integrative.ActivityId;
 import integrative.CreatedBy;
 import integrative.InstanceId;
 
 public class ActivityBoundary {
-	private InstanceId activityId;
-	private InstanceBoundary instance;
+	private ActivityId activityId;
+	private Map<String,InstanceId> instance;
 	private String type;
 	private Date createdTimestamp;
 	private CreatedBy invokedBy;
@@ -18,7 +19,7 @@ public class ActivityBoundary {
 		createdTimestamp = new Date();
 	}
 
-	public ActivityBoundary(InstanceId activityId, InstanceBoundary instance, String type, CreatedBy invokedBy, Map<String, Object> activityAttributes) {
+	public ActivityBoundary(ActivityId activityId, Map<String,InstanceId> instance, String type, CreatedBy invokedBy, Map<String, Object> activityAttributes) {
 		this();
 		this.activityId = activityId;
 		this.instance = instance;
@@ -27,19 +28,19 @@ public class ActivityBoundary {
 		this.activityAttributes = activityAttributes;
 	}
 
-	public InstanceBoundary getInstance() {
+	public Map<String,InstanceId> getInstance() {
 		return instance;
 	}
 
-	public void setInstance(InstanceBoundary instance) {
+	public void setInstance(Map<String,InstanceId> instance) {
 		this.instance = instance;
 	}
 
-	public InstanceId getActivityId() {
+	public ActivityId getActivityId() {
 		return activityId;
 	}
 
-	public void setActivityId(InstanceId activityId) {
+	public void setActivityId(ActivityId activityId) {
 		this.activityId = activityId;
 	}
 
