@@ -13,16 +13,19 @@ public class AdminController {
 
 	@RequestMapping(path = "/iob/admin/users/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteUsers() {
+		// STUB implementation
 		System.err.println("DELETE USERS");
 	}
 
 	@RequestMapping(path = "/iob/admin/instances/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteInstances() {
+		// STUB implementation
 		System.err.println("DELETE INSTANCES");
 	}
 
 	@RequestMapping(path = "/iob/admin/activities/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteActivities() {
+		// STUB implementation
 		System.err.println("DELETE ACTIVITIES");
 	}
 
