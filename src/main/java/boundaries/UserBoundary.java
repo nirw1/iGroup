@@ -7,11 +7,11 @@ public class UserBoundary {
 	private String role;
 	private String username;
 	private String avatar;
-	
+
 	public UserBoundary() {
 
 	}
-	
+
 	public UserBoundary(UserId userId, String role, String username, String avatar) {
 		this.userId = userId;
 		this.role = role;
@@ -50,6 +50,5 @@ public class UserBoundary {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-	
-	
+
 }

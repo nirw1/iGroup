@@ -16,13 +16,13 @@ public class InstanceBoundary {
 	private CreatedBy createdBy;
 	private Location location;
 	private Map<String, Object> instanceAttributes;
-	
+
 	public InstanceBoundary() {
 		createdTimestamp = new Date();
 	}
-	
-	public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, 
-			Date createdTimestamp, CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
+
+	public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, Date createdTimestamp,
+			CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
 		this();
 		this.instanceId = instanceId;
 		this.type = type;

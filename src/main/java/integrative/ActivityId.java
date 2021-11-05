@@ -3,11 +3,11 @@ package integrative;
 public class ActivityId {
 	private String domain;
 	private String id;
-	
+
 	public ActivityId() {
-		
+
 	}
-	
+
 	public ActivityId(String domain, String id) {
 		this.domain = domain;
 		this.id = id;
@@ -28,6 +28,5 @@ public class ActivityId {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	
+
 }

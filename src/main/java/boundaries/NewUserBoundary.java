@@ -1,15 +1,14 @@
 package boundaries;
 
-
 public class NewUserBoundary {
 	private String email;
 	private String role;
 	private String username;
 	private String avatar;
-	
+
 	public NewUserBoundary() {
 	}
-	
+
 	public NewUserBoundary(String email, String role, String username, String avatar) {
 		this.email = email;
 		this.role = role;
@@ -48,6 +47,5 @@ public class NewUserBoundary {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-	
-	
+
 }
