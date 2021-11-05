@@ -1,8 +1,8 @@
-package integrative;
+package boundaries;
 
 public class HelperBoundary {
 	private String content;
-	
+
 	public HelperBoundary() {
 	}
 

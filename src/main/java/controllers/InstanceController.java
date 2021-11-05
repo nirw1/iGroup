@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import boundaries.InstanceBoundary;
+import boundaries.MessageBoundary;
 import integrative.InstanceId;
-import integrative.MessageBoundary;
 
 @RestController
 public class InstanceController {
