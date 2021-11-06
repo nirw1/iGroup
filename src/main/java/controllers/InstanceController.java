@@ -1,5 +1,8 @@
 package controllers;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -7,15 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import boundaries.ActivityBoundary;
 import boundaries.InstanceBoundary;
 import boundaries.MessageBoundary;
+import integrative.CreatedBy;
 import integrative.InstanceId;
+import integrative.Location;
 
 @RestController
 public class InstanceController {
 
 	@RequestMapping(path = "/iob/instances/{userDomain}/{userEmail}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public InstanceBoundary createInstance(@RequestBody InstanceBoundary instanceFromClient) {
+		// Create InstanceBoundary, then return it
 		return instanceFromClient;
 	}
 
@@ -35,6 +42,9 @@ public class InstanceController {
 	@RequestMapping(path = "/iob/instances/{userDomain}/{userEmail}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public InstanceBoundary[] getAllInstances(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		return new InstanceBoundary[] {};
+		InstanceBoundary arr[] = new InstanceBoundary[2];
+		arr[0] = new InstanceBoundary(null, "type-1", "name-1", true, null, null, null, null);
+		arr[1] = new InstanceBoundary(null, "type-2", "name-2", true, null, null, null, null);
+		return arr;
 	}
 }

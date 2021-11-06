@@ -1,0 +1,421 @@
+{
+	"info": {
+		"_postman_id": "129f7473-f3ea-4c05-bd25-da0c5bf254ef",
+		"name": "STUB Collection Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user@demo.com\",\r\n    \"role\": \"PLAYER\",\r\n    \"username\": \"Demo User\",\r\n    \"avatar\": \"J\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login valid user and retrieve user details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8091/iob/users/login/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"users",
+						"login",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user details",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": {\r\n        \"domain\": \"2022a.demo\",\r\n        \"email\": \"user@demo.com\"\r\n    },\r\n    \"role\": \"PLAYER\",\r\n    \"username\": \"Demo User\",\r\n    \"avatar\": \"J\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/users/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"users",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an instance",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instanceId\": null,\r\n    \"type\": \"dummyInstanceType\",\r\n    \"name\": \"demo instance\",\r\n    \"active\": true,\r\n    \"createdTimestamp\": \"2021-10-24T19:55:05.248+0000\",\r\n    \"createdBy\": {\r\n        \"userId\": {\r\n            \"domain\": \"2022a.demo\",\r\n            \"email\": \"user2@demo.com\"\r\n        }\r\n    },\r\n    \"location\": {\r\n        \"lat\": 32.115139,\r\n        \"lng\": 34.817804\r\n    },\r\n    \"instanceAttributes\": {\r\n        \"key1\": \"can be set to any value you wish\",\r\n        \"key2\": \"you can also name the attributes any name you like\",\r\n        \"key3\": 6.2,\r\n        \"key4\": false\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/instances/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"instances",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an instance",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"instanceId\": null,\r\n    \"type\": \"dummyInstanceType\",\r\n    \"name\": \"demo instance\",\r\n    \"active\": true,\r\n    \"createdTimestamp\": \"2021-10-24T19:55:05.248+0000\",\r\n    \"createdBy\": {\r\n        \"userId\": {\r\n            \"domain\": \"2022a.demo\",\r\n            \"email\": \"user2@demo.com\"\r\n        }\r\n    },\r\n    \"location\": {\r\n        \"lat\": 32.115139,\r\n        \"lng\": 34.817804\r\n    },\r\n    \"instanceAttributes\": {\r\n        \"key1\": \"can be set to any value you wish\",\r\n        \"key2\": \"you can also name the attributes any name you like\",\r\n        \"key3\": 6.2,\r\n        \"key4\": false\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/instances/2022a.demo/user@demo.com/2022a.demo/demo.id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"instances",
+						"2022a.demo",
+						"user@demo.com",
+						"2022a.demo",
+						"demo.id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve instance",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/instances/2022a.demo/user@demo.com/2022a.demo/demo.id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"instances",
+						"2022a.demo",
+						"user@demo.com",
+						"2022a.demo",
+						"demo.id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all instances",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/instances/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"instances",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invoke an instance activity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"activityId\": null,\r\n    \"type\": \"demoActivityType\",\r\n    \"instance\": {\r\n        \"instanceId\": {\r\n            \"domain\": \"2022a.demo\",\r\n            \"id\": \"352\"\r\n        }\r\n    },\r\n    \"createdTimestamp\": \"2021-10-24T19:57:23.114+0000\",\r\n    \"invokedBy\": {\r\n        \"userId\": {\r\n            \"domain\": \"2022a.demo\",\r\n            \"email\": \"user3@demo.com\"\r\n        }\r\n    },\r\n    \"activityAttributes\": {\r\n        \"key1\": \"can be set to any value you wish\",\r\n        \"key2\": {\r\n            \"key2Subkey1\": \"can be nested json\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/activities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"activities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all users in the domain",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/admin/users/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"admin",
+						"users",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all instances in the domain",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/admin/instances/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"admin",
+						"instances",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all activities in the domain",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/admin/activities/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"admin",
+						"activities",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export all users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/admin/users/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"admin",
+						"users",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export all activities",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8091/iob/admin/activities/2022a.demo/user@demo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"iob",
+						"admin",
+						"activities",
+						"2022a.demo",
+						"user@demo.com"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
