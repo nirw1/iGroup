@@ -1,8 +1,5 @@
 package controllers;
 
-import java.util.Date;
-import java.util.Map;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,12 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundaries.ActivityBoundary;
 import boundaries.InstanceBoundary;
-import boundaries.MessageBoundary;
-import integrative.CreatedBy;
-import integrative.InstanceId;
-import integrative.Location;
 
 @RestController
 public class InstanceController {
