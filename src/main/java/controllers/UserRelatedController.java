@@ -13,7 +13,10 @@ import boundaries.UserBoundary;
 
 @RestController
 public class UserRelatedController {
-	@RequestMapping(path = "/iob/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(
+			path = "/iob/users", method = RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UserBoundary createUser(@RequestBody NewUserBoundary newUser) {
 		UserId userId = new UserId("demo.domain", newUser.getEmail()); // TODO demo need to be changed to agreed value
 		UserBoundary userBoundry = new UserBoundary(userId, newUser.getRole(), newUser.getUsername(),
