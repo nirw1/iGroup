@@ -1,39 +1,40 @@
 package boundaries;
 
 import java.util.Date;
-import java.util.Map;
 
 import integrative.ActivityId;
+import integrative.Attributes;
 import integrative.CreatedBy;
 import integrative.InstanceId;
 
 public class ActivityBoundary {
 	private ActivityId activityId;
-	private Map<String, InstanceId> instance;
+	private InstanceId instance;
 	private String type;
 	private Date createdTimestamp;
 	private CreatedBy invokedBy;
-	private Map<String, Object> activityAttributes;
+	private Attributes activityAttributes;
 
 	public ActivityBoundary() {
 		createdTimestamp = new Date();
 	}
 
-	public ActivityBoundary(ActivityId activityId, Map<String, InstanceId> instance, String type, CreatedBy invokedBy,
-			Map<String, Object> activityAttributes) {
-		this();
+	public ActivityBoundary(ActivityId activityId, InstanceId instance, String type, Date createdTimestamp,
+			CreatedBy invokedBy, Attributes activityAttributes) {
+		super();
 		this.activityId = activityId;
 		this.instance = instance;
 		this.type = type;
+		this.createdTimestamp = createdTimestamp;
 		this.invokedBy = invokedBy;
 		this.activityAttributes = activityAttributes;
 	}
 
-	public Map<String, InstanceId> getInstance() {
+	public InstanceId getInstance() {
 		return instance;
 	}
 
-	public void setInstance(Map<String, InstanceId> instance) {
+	public void setInstance(InstanceId instance) {
 		this.instance = instance;
 	}
 
@@ -69,11 +70,11 @@ public class ActivityBoundary {
 		this.invokedBy = invokedBy;
 	}
 
-	public Map<String, Object> getActivityAttributes() {
+	public Attributes getActivityAttributes() {
 		return activityAttributes;
 	}
 
-	public void setActivityAttributes(Map<String, Object> activityAttributes) {
+	public void setActivityAttributes(Attributes activityAttributes) {
 		this.activityAttributes = activityAttributes;
 	}
 }
