@@ -13,6 +13,7 @@ public class UserBoundary {
 	}
 
 	public UserBoundary(UserId userId, String role, String username, String avatar) {
+		super();
 		this.userId = userId;
 		this.role = role;
 		this.username = username;

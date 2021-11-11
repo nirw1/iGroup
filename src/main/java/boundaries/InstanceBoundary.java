@@ -1,8 +1,8 @@
 package boundaries;
 
 import java.util.Date;
-import java.util.Map;
 
+import integrative.Attributes;
 import integrative.CreatedBy;
 import integrative.InstanceId;
 import integrative.Location;
@@ -15,15 +15,16 @@ public class InstanceBoundary {
 	private Date createdTimestamp;
 	private CreatedBy createdBy;
 	private Location location;
-	private Map<String, Object> instanceAttributes;
+	private Attributes instanceAttributes;
 
 	public InstanceBoundary() {
-		createdTimestamp = new Date();
+		this.instanceId = new InstanceId();
+		this.createdTimestamp = new Date();
 	}
 
 	public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, Date createdTimestamp,
-			CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
-		this();
+			CreatedBy createdBy, Location location, Attributes instanceAttributes) {
+		super();
 		this.instanceId = instanceId;
 		this.type = type;
 		this.name = name;
@@ -90,11 +91,12 @@ public class InstanceBoundary {
 		this.location = location;
 	}
 
-	public Map<String, Object> getInstanceAttributes() {
+	public Attributes getInstanceAttributes() {
 		return instanceAttributes;
 	}
 
-	public void setInstanceAttributes(Map<String, Object> instanceAttributes) {
+	public void setInstanceAttributes(Attributes instanceAttributes) {
 		this.instanceAttributes = instanceAttributes;
 	}
+
 }
