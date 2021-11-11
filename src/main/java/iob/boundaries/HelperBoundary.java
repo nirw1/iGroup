@@ -1,4 +1,4 @@
-package boundaries;
+package iob.boundaries;
 
 public class HelperBoundary {
 	private String content;

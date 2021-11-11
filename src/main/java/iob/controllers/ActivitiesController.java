@@ -1,4 +1,4 @@
-package controllers;
+package iob.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundaries.ActivityBoundary;
+import iob.boundaries.ActivityBoundary;
 
 @RestController
 public class ActivitiesController {

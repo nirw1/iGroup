@@ -1,4 +1,4 @@
-package controllers;
+package iob.controllers;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundaries.MessageBoundary;
+import iob.boundaries.MessageBoundary;
 
 @RestController
 public class MessageController {

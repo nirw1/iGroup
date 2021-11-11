@@ -1,11 +1,11 @@
-package boundaries;
+package iob.boundaries;
 
 import java.util.Date;
 
-import integrative.Attributes;
-import integrative.CreatedBy;
-import integrative.InstanceId;
-import integrative.Location;
+import iob.attributes.Attributes;
+import iob.attributes.CreatedBy;
+import iob.attributes.InstanceId;
+import iob.attributes.Location;
 
 public class InstanceBoundary {
 	private InstanceId instanceId;

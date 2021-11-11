@@ -1,28 +1,31 @@
-package boundaries;
+package iob.boundaries;
 
-public class NewUserBoundary {
-	private String email;
+import iob.attributes.UserId;
+
+public class UserBoundary {
+	private UserId userId;
 	private String role;
 	private String username;
 	private String avatar;
 
-	public NewUserBoundary() {
+	public UserBoundary() {
+
 	}
 
-	public NewUserBoundary(String email, String role, String username, String avatar) {
+	public UserBoundary(UserId userId, String role, String username, String avatar) {
 		super();
-		this.email = email;
+		this.userId = userId;
 		this.role = role;
 		this.username = username;
 		this.avatar = avatar;
 	}
 
-	public String getEmail() {
-		return email;
+	public UserId getUserId() {
+		return userId;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserId(UserId userId) {
+		this.userId = userId;
 	}
 
 	public String getRole() {

@@ -1,4 +1,4 @@
-package integrative;
+package iob.attributes;
 
 public class UserId {
 	private String domain;

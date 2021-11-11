@@ -1,4 +1,4 @@
-package boundaries;
+package iob.boundaries;
 
 import java.util.Date;
 
