@@ -43,8 +43,10 @@ public class UserRelatedController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE
 	)
-	public void updateUser(@PathVariable("userDomain") String userDomain, @PathVariable("userEmail") String userEmail) {
+	public void updateUser(@RequestBody UserBoundary user, @PathVariable("userDomain") String userDomain,
+			@PathVariable("userEmail") String userEmail) {
 		// STUB implementation
+		System.err.println(user);
 		System.err.println("UPDATE USER - DOMAIN: " + userDomain + " USER: " + userEmail);
 	}
 
