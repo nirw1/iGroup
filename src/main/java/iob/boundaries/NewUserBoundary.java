@@ -1,31 +1,28 @@
-package boundaries;
+package iob.boundaries;
 
-import integrative.UserId;
-
-public class UserBoundary {
-	private UserId userId;
+public class NewUserBoundary {
+	private String email;
 	private String role;
 	private String username;
 	private String avatar;
 
-	public UserBoundary() {
-
+	public NewUserBoundary() {
 	}
 
-	public UserBoundary(UserId userId, String role, String username, String avatar) {
+	public NewUserBoundary(String email, String role, String username, String avatar) {
 		super();
-		this.userId = userId;
+		this.email = email;
 		this.role = role;
 		this.username = username;
 		this.avatar = avatar;
 	}
 
-	public UserId getUserId() {
-		return userId;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUserId(UserId userId) {
-		this.userId = userId;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getRole() {

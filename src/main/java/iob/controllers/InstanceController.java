@@ -1,4 +1,4 @@
-package controllers;
+package iob.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundaries.InstanceBoundary;
-import integrative.CreatedBy;
-import integrative.InstanceId;
-import integrative.UserId;
+import iob.attributes.CreatedBy;
+import iob.attributes.InstanceId;
+import iob.attributes.UserId;
+import iob.boundaries.InstanceBoundary;
 
 @RestController
 public class InstanceController {

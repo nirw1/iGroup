@@ -1,4 +1,4 @@
-package controllers;
+package iob.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boundaries.ActivityBoundary;
-import boundaries.UserBoundary;
+import iob.boundaries.ActivityBoundary;
+import iob.boundaries.UserBoundary;
 
 @RestController
 public class AdminController {

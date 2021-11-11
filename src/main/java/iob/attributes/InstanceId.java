@@ -1,4 +1,4 @@
-package integrative;
+package iob.attributes;
 
 public class InstanceId {
 	private static int instanceCount = 0;

@@ -1,4 +1,4 @@
-package integrative;
+package iob.attributes;
 
 import java.util.HashMap;
 
