@@ -1,5 +1,8 @@
 package iob.controllers;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,9 +14,16 @@ import iob.attributes.CreatedBy;
 import iob.attributes.InstanceId;
 import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
+import iob.logic.InstancesService;
 
 @RestController
 public class InstanceController {
+	private InstancesService instancesService;
+
+	@Autowired
+	public InstanceController(InstancesService instancesService) {
+		this.instancesService = instancesService;
+	}
 
 	@RequestMapping(
 			path = "/iob/instances/{userDomain}/{userEmail}",
@@ -23,9 +33,7 @@ public class InstanceController {
 	)
 	public InstanceBoundary createInstance(@RequestBody InstanceBoundary instanceFromClient,
 			@PathVariable("userDomain") String userDomain, @PathVariable("userEmail") String userEmail) {
-		instanceFromClient.getInstanceId().setDomain(userDomain);
-		instanceFromClient.setCreatedBy(new CreatedBy(new UserId(userDomain, userEmail)));
-		return instanceFromClient;
+		return this.instancesService.createInstance(userDomain, userEmail, instanceFromClient);
 	}
 
 	@RequestMapping(
@@ -49,10 +57,7 @@ public class InstanceController {
 	public InstanceBoundary getInstance(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail, @PathVariable("instanceDomain") String instanceDomain,
 			@PathVariable("instanceId") String instanceId) {
-		InstanceBoundary tmp = new InstanceBoundary();
-		tmp.setCreatedBy(new CreatedBy(new UserId(userDomain, userEmail)));
-		tmp.setInstanceId(new InstanceId(instanceDomain, instanceId));
-		return tmp;
+		return instancesService.getSpecificInstance(userDomain, userEmail, instanceDomain, instanceId);
 	}
 
 	@RequestMapping(
@@ -62,9 +67,6 @@ public class InstanceController {
 	)
 	public InstanceBoundary[] getAllInstances(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		InstanceBoundary arr[] = new InstanceBoundary[2];
-		arr[0] = new InstanceBoundary(new InstanceId(), "type-1", "name-1", true, null, new CreatedBy(new UserId(userDomain,userEmail)), null, null);
-		arr[1] = new InstanceBoundary(new InstanceId(), "type-2", "name-2", true, null, new CreatedBy(new UserId(userDomain,userEmail)), null, null);
-		return arr;
+		return instancesService.getAllInstances(userDomain, userEmail).toArray(new InstanceBoundary[0]);
 	}
 }

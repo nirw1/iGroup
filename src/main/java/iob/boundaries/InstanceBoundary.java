@@ -1,6 +1,7 @@
 package iob.boundaries;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import iob.attributes.Attributes;
 import iob.attributes.CreatedBy;
@@ -15,7 +16,7 @@ public class InstanceBoundary {
 	private Date createdTimestamp;
 	private CreatedBy createdBy;
 	private Location location;
-	private Attributes instanceAttributes;
+	private HashMap<String, Object> instanceAttributes;
 
 	public InstanceBoundary() {
 		this.instanceId = new InstanceId();
@@ -91,11 +92,11 @@ public class InstanceBoundary {
 		this.location = location;
 	}
 
-	public Attributes getInstanceAttributes() {
+	public HashMap<String, Object> getInstanceAttributes() {
 		return instanceAttributes;
 	}
 
-	public void setInstanceAttributes(Attributes instanceAttributes) {
+	public void setInstanceAttributes(HashMap<String, Object> instanceAttributes) {
 		this.instanceAttributes = instanceAttributes;
 	}
 
