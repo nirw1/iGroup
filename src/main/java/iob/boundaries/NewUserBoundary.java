@@ -1,15 +1,17 @@
 package iob.boundaries;
 
+import iob.data.UserRole;
+
 public class NewUserBoundary {
 	private String email;
-	private String role;
+	private UserRole role;
 	private String username;
 	private String avatar;
 
 	public NewUserBoundary() {
 	}
 
-	public NewUserBoundary(String email, String role, String username, String avatar) {
+	public NewUserBoundary(String email, UserRole role, String username, String avatar) {
 		super();
 		this.email = email;
 		this.role = role;
@@ -25,11 +27,11 @@ public class NewUserBoundary {
 		this.email = email;
 	}
 
-	public String getRole() {
+	public UserRole getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(UserRole role) {
 		this.role = role;
 	}
 

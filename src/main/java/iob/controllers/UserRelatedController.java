@@ -1,5 +1,6 @@
 package iob.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,9 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 import iob.attributes.UserId;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
+import iob.logic.UsersService;
 
 @RestController
 public class UserRelatedController {
+	private UsersService usersService;
+
+	@Autowired
+	public UserRelatedController(UsersService usersService) {
+		super();
+		this.usersService = usersService;
+	}
+
 	@RequestMapping(
 			path = "/iob/users",
 			method = RequestMethod.POST,
@@ -20,10 +30,12 @@ public class UserRelatedController {
 			consumes = MediaType.APPLICATION_JSON_VALUE
 	)
 	public UserBoundary createUser(@RequestBody NewUserBoundary newUser) {
-		UserId userId = new UserId("demo.domain", newUser.getEmail()); // TODO demo need to be changed to agreed value
+		UserId userId = new UserId("2022a.daniel.shaal", newUser.getEmail()); // TODO demo need to be changed to agreed
+																				// value
 		UserBoundary userBoundry = new UserBoundary(userId, newUser.getRole(), newUser.getUsername(),
 				newUser.getAvatar());
-		return userBoundry;
+
+		return this.usersService.createUser(userBoundry);
 	}
 
 	@RequestMapping(
@@ -33,9 +45,7 @@ public class UserRelatedController {
 	)
 	public UserBoundary loginUser(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		UserBoundary userBoundry = new UserBoundary();
-		userBoundry.setUserId(new UserId(userDomain, userEmail));
-		return userBoundry;
+		return this.usersService.login(userDomain, userEmail);
 	}
 
 	@RequestMapping(
@@ -45,9 +55,7 @@ public class UserRelatedController {
 	)
 	public void updateUser(@RequestBody UserBoundary user, @PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		// STUB implementation
-		System.err.println(user);
-		System.err.println("UPDATE USER - DOMAIN: " + userDomain + " USER: " + userEmail);
+		this.usersService.updateUser(userDomain, userEmail, user);
 	}
 
 }

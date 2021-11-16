@@ -1,5 +1,6 @@
 package iob.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,15 +9,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.ActivityBoundary;
 import iob.boundaries.UserBoundary;
+import iob.logic.UsersService;
 
 @RestController
 public class AdminController {
 
+	private UsersService usersService;
+
+	@Autowired
+	public AdminController(UsersService usersService) {
+		super();
+		this.usersService = usersService;
+	}
+
 	@RequestMapping(path = "/iob/admin/users/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteUsers(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		// STUB implementation
-		System.err.println("DELETE USERS - DOMAIN: " + userDomain + " USER: " + userEmail);
+		this.usersService.deleteAllUsers(userDomain, userEmail);
 	}
 
 	@RequestMapping(path = "/iob/admin/instances/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
@@ -40,11 +49,7 @@ public class AdminController {
 	)
 	public UserBoundary[] getUsers(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		System.err.println("GET USERS - DOMAIN: " + userDomain + " USER: " + userEmail);
-		UserBoundary arr[] = new UserBoundary[2];
-		arr[0] = new UserBoundary(null, "role-1", "username-1", "avatar-1");
-		arr[1] = new UserBoundary(null, "role-2", "username-2", "avatar-2");
-		return arr;
+		return this.usersService.getAllUser(userDomain, userEmail);
 	}
 
 	@RequestMapping(
