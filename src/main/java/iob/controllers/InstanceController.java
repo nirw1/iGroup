@@ -1,7 +1,5 @@
 package iob.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,9 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import iob.attributes.CreatedBy;
-import iob.attributes.InstanceId;
-import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
 import iob.logic.InstancesService;
 
@@ -33,7 +28,7 @@ public class InstanceController {
 	)
 	public InstanceBoundary createInstance(@RequestBody InstanceBoundary instanceFromClient,
 			@PathVariable("userDomain") String userDomain, @PathVariable("userEmail") String userEmail) {
-		return this.instancesService.createInstance(userDomain, userEmail, instanceFromClient);
+		return instancesService.createInstance(userDomain, userEmail, instanceFromClient);
 	}
 
 	@RequestMapping(
@@ -44,7 +39,7 @@ public class InstanceController {
 	public void updateInstance(@RequestBody InstanceBoundary instanceFromClient,
 			@PathVariable("userDomain") String userDomain, @PathVariable("userEmail") String userEmail,
 			@PathVariable("instanceDomain") String instanceDomain, @PathVariable("instanceId") String instanceId) {
-		// STUB implementation
+		instancesService.updateInstance(userDomain, userEmail, instanceDomain, instanceId, instanceFromClient);
 		System.err.println("UPDATE INSTANCE - DOMAIN: " + userDomain + " USER: " + userEmail);
 		System.err.println("                  DOMAIN: " + instanceDomain + " USER: " + instanceId);
 	}

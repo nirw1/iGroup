@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class InstanceEntity {
-	private String instanceId;
+	private Long id;
+	private String domain;
 	private String type;
 	private String name;
 	private boolean active;
@@ -17,12 +18,20 @@ public class InstanceEntity {
 	public InstanceEntity() {
 	}
 	
-	public String getInstanceId() {
-		return instanceId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 
 	public String getType() {

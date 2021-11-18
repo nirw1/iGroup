@@ -1,25 +1,25 @@
-package iob.errors.user;
+package iob.errors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class UserNotFoundException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1639276520729963657L;
 
-	public UserNotFoundException() {
+	public NotFoundException() {
 		super();
 	}
 
-	public UserNotFoundException(String message, Throwable cause) {
+	public NotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public UserNotFoundException(String message) {
+	public NotFoundException(String message) {
 		super(message);
 	}
 
-	public UserNotFoundException(Throwable cause) {
+	public NotFoundException(Throwable cause) {
 		super(cause);
 	}
 

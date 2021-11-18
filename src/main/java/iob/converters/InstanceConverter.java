@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import iob.attributes.CreatedBy;
 import iob.attributes.InstanceId;
 import iob.attributes.Location;
-import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
 import iob.data.InstanceEntity;
 
@@ -15,16 +14,10 @@ public class InstanceConverter {
 		InstanceBoundary boundary = new InstanceBoundary();
 		
 		boundary.setActive(entity.getActive());
-		
-		String[] createdBy = entity.getCreatedBy().split("@@");
-		boundary.setCreatedBy(new CreatedBy(new UserId(createdBy[1], createdBy[0])));
-		
+		boundary.setCreatedBy(new CreatedBy(entity.getCreatedBy()));
 		boundary.setCreatedTimestamp(entity.getCreatedTimestamp());	
 		boundary.setInstanceAttributes(entity.getInstanceAttributes());
-		
-		String[] instanceId = entity.getInstanceId().split("@");
-		boundary.setInstanceId(new InstanceId(instanceId[1], instanceId[0]));
-		
+		boundary.setInstanceId(new InstanceId(entity.getDomain(), entity.getId().toString()));
 		boundary.setLocation(new Location(entity.getLatitude(), entity.getLongitude()));
 		boundary.setName(entity.getName());
 		boundary.setType(entity.getType());
@@ -38,7 +31,7 @@ public class InstanceConverter {
 		entity.setActive(boundary.getActive());
 		
 		if (boundary.getCreatedBy() != null) {
-			entity.setCreatedBy(String.format("%s@@%s", boundary.getCreatedBy().getUserId().getEmail(), boundary.getCreatedBy().getUserId().getDomain()));
+			entity.setCreatedBy(boundary.getCreatedBy().toString());
 		}
 		else {
 			entity.setCreatedBy("");
@@ -47,12 +40,7 @@ public class InstanceConverter {
 		entity.setCreatedTimestamp(boundary.getCreatedTimestamp());
 		entity.setInstanceAttributes(boundary.getInstanceAttributes());
 		
-		if (boundary.getInstanceId() != null) {
-			entity.setInstanceId(String.format("%s@%s", boundary.getInstanceId().getId(), boundary.getInstanceId().getDomain()));
-		}
-		else {
-			entity.setInstanceId("");
-		}
+		// ignore instance Id
 		
 		if (boundary.getLocation() != null) {
 			entity.setLatitude(boundary.getLocation().getLat());
@@ -67,5 +55,9 @@ public class InstanceConverter {
 		entity.setType(boundary.getType());
 		
 		return entity;
+	}
+
+	public String convertPropertiesToKey(String domain, String id) {
+		return id + '@' + domain;
 	}
 }
