@@ -1,16 +1,13 @@
 package iob.attributes;
 
 public class InstanceId {
-	private static int instanceCount = 0;
 	private String domain;
 	private String id;
 
 	public InstanceId() {
-		this.id = Integer.toString(++instanceCount);
 	}
 
 	public InstanceId(String domain) {
-		this();
 		this.domain = domain;
 	}
 	

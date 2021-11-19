@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
-import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,9 @@ import org.springframework.stereotype.Service;
 import iob.boundaries.UserBoundary;
 import iob.converters.UserConverter;
 import iob.data.UserEntity;
-import iob.errors.user.UserAlreadyExistsException;
-import iob.errors.user.UserNotFoundException;
-import iob.errors.user.UserUpdateFailedException;
+import iob.errors.UserAlreadyExistsException;
+import iob.errors.NotFoundException;
+import iob.errors.UpdateFailedException;
 
 @Service
 public class UsersServiceMockup implements UsersService {
@@ -65,7 +64,7 @@ public class UsersServiceMockup implements UsersService {
 
 		UserEntity entityInStorage = this.storage.get(key);
 		if (entityInStorage == null) {
-			throw new UserNotFoundException(
+			throw new NotFoundException(
 					"Could not find user by domain - " + userDomain + " and email - " + userEmail);
 		}
 
@@ -80,7 +79,7 @@ public class UsersServiceMockup implements UsersService {
 		UserEntity existing = this.storage.get(key);
 
 		if (existing == null) {
-			throw new UserNotFoundException(
+			throw new NotFoundException(
 					"Could not find user by domain - " + userDomain + " and email - " + userEmail);
 		}
 
@@ -109,7 +108,7 @@ public class UsersServiceMockup implements UsersService {
 
 			existing = this.storage.get(key);
 			if (existing == null) {
-				throw new UserUpdateFailedException("User update failed with parameters:\ndomain: " + userDomain
+				throw new UpdateFailedException("User update failed with parameters:\ndomain: " + userDomain
 						+ "\nemail: " + userEmail + "\nupdatedUser: " + updatedUser.toString());
 			}
 		}

@@ -9,17 +9,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.ActivityBoundary;
 import iob.boundaries.UserBoundary;
+import iob.logic.InstancesService;
 import iob.logic.UsersService;
 
 @RestController
 public class AdminController {
 
 	private UsersService usersService;
+	private InstancesService instancesService;
 
 	@Autowired
-	public AdminController(UsersService usersService) {
+	public AdminController(UsersService usersService, InstancesService instancesService) {
 		super();
 		this.usersService = usersService;
+		this.instancesService = instancesService;
 	}
 
 	@RequestMapping(path = "/iob/admin/users/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
@@ -31,8 +34,7 @@ public class AdminController {
 	@RequestMapping(path = "/iob/admin/instances/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteInstances(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		// STUB implementation
-		System.err.println("DELETE INSTANCES - DOMAIN: " + userDomain + " USER: " + userEmail);
+		this.instancesService.deleteAllInstances(userDomain, userEmail);
 	}
 
 	@RequestMapping(path = "/iob/admin/activities/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
