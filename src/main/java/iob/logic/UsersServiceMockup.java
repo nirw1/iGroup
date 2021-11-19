@@ -43,18 +43,18 @@ public class UsersServiceMockup implements UsersService {
 	}
 
 	@Override
-	public UserBoundary createUser(NewUserBoundary newUser) {
+	public UserBoundary createUser(UserBoundary user) {
 
 		// checking if email address is valid
 		Pattern pattern = Pattern.compile(emailRegex);
-		Matcher matcher = pattern.matcher(newUser.getEmail());
+		Matcher matcher = pattern.matcher(user.getUserId().getEmail());
 
 		// if not matching, throw exception
 		if (!matcher.matches()) {
 			throw new RuntimeException("Invalid email provided");
 		}
 
-		UserEntity entityToStore = this.converter.convertToEntity(new UserBoundary(newUser));
+		UserEntity entityToStore = this.converter.convertToEntity(user);
 		entityToStore.setDomain(appName);
 		String key = this.converter.convertPropertiesToKey(entityToStore.getDomain(), entityToStore.getEmail());
 

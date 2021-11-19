@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import iob.attributes.UserId;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
 import iob.logic.UsersService;
@@ -29,7 +30,10 @@ public class UserRelatedController {
 			consumes = MediaType.APPLICATION_JSON_VALUE
 	)
 	public UserBoundary createUser(@RequestBody NewUserBoundary newUser) {
-		return this.usersService.createUser(newUser);
+		UserId userId = new UserId(null, newUser.getEmail()); 
+		UserBoundary userBoundry = new UserBoundary(userId, newUser.getRole(), newUser.getUsername(),
+				newUser.getAvatar());
+		return this.usersService.createUser(userBoundry);
 	}
 
 	@RequestMapping(

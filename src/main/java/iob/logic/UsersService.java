@@ -1,11 +1,10 @@
 package iob.logic;
 
-import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
 
 public interface UsersService {
 
-	public UserBoundary createUser(NewUserBoundary user);
+	public UserBoundary createUser(UserBoundary user);
 
 	public UserBoundary login(String userDomain, String userEmail);
 
