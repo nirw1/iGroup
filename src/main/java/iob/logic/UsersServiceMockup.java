@@ -2,15 +2,19 @@ package iob.logic;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
 import iob.converters.UserConverter;
 import iob.data.UserEntity;
@@ -22,11 +26,17 @@ import iob.errors.UpdateFailedException;
 public class UsersServiceMockup implements UsersService {
 	private Map<String, UserEntity> storage;
 	private UserConverter converter;
-	private final String emailRegex = "^(.+)@(.+)$";;
+	private final String emailRegex = "^(.+)@(.+)$";
+	private String appName;
 
 	@Autowired
 	public UsersServiceMockup(UserConverter converter) {
 		this.converter = converter;
+	}
+
+	@Value("${spring.application.name}") // read this value from Spring Configuration
+	public void setAppName(String appName) {
+		this.appName = appName;
 	}
 
 	@PostConstruct
@@ -40,12 +50,14 @@ public class UsersServiceMockup implements UsersService {
 		// checking if email address is valid
 		Pattern pattern = Pattern.compile(emailRegex);
 		Matcher matcher = pattern.matcher(user.getUserId().getEmail());
+
 		// if not matching, throw exception
 		if (!matcher.matches()) {
 			throw new RuntimeException("Invalid email provided");
 		}
 
 		UserEntity entityToStore = this.converter.convertToEntity(user);
+		entityToStore.setDomain(appName);
 		String key = this.converter.convertPropertiesToKey(entityToStore.getDomain(), entityToStore.getEmail());
 
 		if (this.storage.containsKey(key)) {
@@ -64,8 +76,7 @@ public class UsersServiceMockup implements UsersService {
 
 		UserEntity entityInStorage = this.storage.get(key);
 		if (entityInStorage == null) {
-			throw new NotFoundException(
-					"Could not find user by domain - " + userDomain + " and email - " + userEmail);
+			throw new NotFoundException("Could not find user by domain - " + userDomain + " and email - " + userEmail);
 		}
 
 		UserBoundary boundary = this.converter.convertToBoundary(entityInStorage);
@@ -79,8 +90,7 @@ public class UsersServiceMockup implements UsersService {
 		UserEntity existing = this.storage.get(key);
 
 		if (existing == null) {
-			throw new NotFoundException(
-					"Could not find user by domain - " + userDomain + " and email - " + userEmail);
+			throw new NotFoundException("Could not find user by domain - " + userDomain + " and email - " + userEmail);
 		}
 
 		UserEntity updatedProperties = this.converter.convertToEntity(updatedUser);
@@ -117,9 +127,9 @@ public class UsersServiceMockup implements UsersService {
 	}
 
 	@Override
-	public UserBoundary[] getAllUser(String adminDomain, String adminEmail) {
+	public List<UserBoundary> getAllUser(String adminDomain, String adminEmail) {
 		// TODO: check if its real admin's domain and email
-		return this.storage.values().stream().map(this.converter::convertToBoundary).toArray(UserBoundary[]::new);
+		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 
 	}
 

@@ -1,7 +1,7 @@
 package iob.data;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 public class InstanceEntity {
 	private Long id;
@@ -13,11 +13,11 @@ public class InstanceEntity {
 	private String createdBy;
 	private double latitude;
 	private double longitude;
-	private  HashMap<String, Object> instanceAttributes;
-	 
+	private Map<String, Object> instanceAttributes;
+
 	public InstanceEntity() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -90,11 +90,11 @@ public class InstanceEntity {
 		this.longitude = longitude;
 	}
 
-	public HashMap<String, Object> getInstanceAttributes() {
+	public Map<String, Object> getInstanceAttributes() {
 		return instanceAttributes;
 	}
 
-	public void setInstanceAttributes(HashMap<String, Object> instanceAttributes) {
+	public void setInstanceAttributes(Map<String, Object> instanceAttributes) {
 		this.instanceAttributes = instanceAttributes;
 	}
 }

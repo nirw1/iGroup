@@ -30,11 +30,9 @@ public class UserRelatedController {
 			consumes = MediaType.APPLICATION_JSON_VALUE
 	)
 	public UserBoundary createUser(@RequestBody NewUserBoundary newUser) {
-		UserId userId = new UserId("2022a.daniel.shaal", newUser.getEmail()); // TODO demo need to be changed to agreed
-																				// value
+		UserId userId = new UserId(null, newUser.getEmail()); 
 		UserBoundary userBoundry = new UserBoundary(userId, newUser.getRole(), newUser.getUsername(),
 				newUser.getAvatar());
-
 		return this.usersService.createUser(userBoundry);
 	}
 

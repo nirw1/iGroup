@@ -6,11 +6,11 @@ public class UserEntity {
 	private String role;
 	private String username;
 	private String avatar;
-	
+
 	public UserEntity() {
 		super();
 	}
-	
+
 	public UserEntity(String domain, String email, String role, String username, String avatar) {
 		super();
 		this.domain = domain;
@@ -59,8 +59,5 @@ public class UserEntity {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-	
-	
-	
-	
+
 }
