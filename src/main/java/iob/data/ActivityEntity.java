@@ -1,6 +1,7 @@
 package iob.data;
 
 import java.util.Date;
+import java.util.Map;
 
 import iob.attributes.Attributes;
 
@@ -13,7 +14,7 @@ public class ActivityEntity {
 	private String type;
 	private Date createdTimestamp;
 	private String invokedBy;
-	private Attributes activityAttributes;
+	private Map<String, Object> activityAttributes;
 	
 
 
@@ -106,13 +107,13 @@ public class ActivityEntity {
 
 
 
-	public Attributes getActivityAttributes() {
+	public Map<String, Object> getActivityAttributes() {
 		return activityAttributes;
 	}
 
 
 
-	public void setActivityAttributes(Attributes activityAttributes) {
+	public void setActivityAttributes(Map<String, Object> activityAttributes) {
 		this.activityAttributes = activityAttributes;
 	}
 
@@ -124,6 +125,9 @@ public class ActivityEntity {
 				+ instanceDomain + ", instanceId=" + instanceId + ", type=" + type + ", createdTimestamp="
 				+ createdTimestamp + ", invokedBy=" + invokedBy + ", activityAttributes=" + activityAttributes + "]";
 	}
+
+
+
 
 	
 }
