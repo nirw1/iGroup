@@ -68,7 +68,7 @@ public class ActivitiesServiceMockup implements ActivitiesService {
 
 	@Override
 	public void deleteAllActivities(String adminDomain, String adminEmail) {
-		String invokeBy = new CreatedBy(new UserId(adminDomain, adminEmail)).toString();
+//		String invokeBy = new CreatedBy(new UserId(adminDomain, adminEmail)).toString();
 		// TODO Auto-generated method stub
 		this.storage.clear();
 		

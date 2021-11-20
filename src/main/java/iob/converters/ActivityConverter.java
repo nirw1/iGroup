@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import iob.attributes.ActivityId;
 import iob.attributes.CreatedBy;
 import iob.attributes.InstanceId;
-import iob.attributes.UserId;
 import iob.boundaries.ActivityBoundary;
 import iob.data.ActivityEntity;
 
