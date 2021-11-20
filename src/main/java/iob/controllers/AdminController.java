@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.ActivityBoundary;
 import iob.boundaries.UserBoundary;
+import iob.logic.ActivitiesService;
 import iob.logic.InstancesService;
 import iob.logic.UsersService;
 
@@ -17,12 +18,15 @@ public class AdminController {
 
 	private UsersService usersService;
 	private InstancesService instancesService;
+	private ActivitiesService activitiesService;
 
 	@Autowired
-	public AdminController(UsersService usersService, InstancesService instancesService) {
+	public AdminController(UsersService usersService, InstancesService instancesService,
+			ActivitiesService activitiesService) {
 		super();
 		this.usersService = usersService;
 		this.instancesService = instancesService;
+		this.activitiesService = activitiesService;
 	}
 
 	@RequestMapping(path = "/iob/admin/users/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
@@ -40,8 +44,8 @@ public class AdminController {
 	@RequestMapping(path = "/iob/admin/activities/{userDomain}/{userEmail}", method = RequestMethod.DELETE)
 	public void deleteActivities(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		// STUB implementation
-		System.err.println("DELETE ACTIVITIES - DOMAIN: " + userDomain + " USER: " + userEmail);
+
+		this.activitiesService.deleteAllActivities(userDomain, userEmail);
 	}
 
 	@RequestMapping(
@@ -61,11 +65,7 @@ public class AdminController {
 	)
 	public ActivityBoundary[] getActivities(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		System.err.println("GET ACTIVITIES - DOMAIN: " + userDomain + " USER: " + userEmail);
-		ActivityBoundary arr[] = new ActivityBoundary[2];
-		arr[0] = new ActivityBoundary(null, null, "type-1", null, null, null);
-		arr[1] = new ActivityBoundary(null, null, "type-2", null, null, null);
-		return arr;
+		return this.activitiesService.getAllActivities(userDomain, userEmail).toArray(new ActivityBoundary[0]);
 	}
 
 }

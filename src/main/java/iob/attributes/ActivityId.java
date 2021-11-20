@@ -12,6 +12,11 @@ public class ActivityId {
 		this.domain = domain;
 		this.id = id;
 	}
+	
+	public ActivityId(String domain, long id) {
+		this.domain = domain;
+		this.id = String.valueOf(id);
+	}
 
 	public String getDomain() {
 		return domain;
