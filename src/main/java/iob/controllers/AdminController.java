@@ -51,7 +51,7 @@ public class AdminController {
 	)
 	public UserBoundary[] getUsers(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		return this.usersService.getAllUser(userDomain, userEmail);
+		return this.usersService.getAllUser(userDomain, userEmail).toArray(new UserBoundary[0]);
 	}
 
 	@RequestMapping(

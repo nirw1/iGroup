@@ -1,5 +1,7 @@
 package iob.logic;
 
+import java.util.List;
+
 import iob.boundaries.UserBoundary;
 
 public interface UsersService {
@@ -10,7 +12,7 @@ public interface UsersService {
 
 	public UserBoundary updateUser(String userDomain, String userEmail, UserBoundary uptade);
 
-	public UserBoundary[] getAllUser(String adminDomain, String adminEmail);
+	public List<UserBoundary> getAllUser(String adminDomain, String adminEmail);
 
 	public void deleteAllUsers(String adminDomain, String adminEmail);
 

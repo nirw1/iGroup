@@ -2,9 +2,11 @@ package iob.logic;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -125,9 +127,9 @@ public class UsersServiceMockup implements UsersService {
 	}
 
 	@Override
-	public UserBoundary[] getAllUser(String adminDomain, String adminEmail) {
+	public List<UserBoundary> getAllUser(String adminDomain, String adminEmail) {
 		// TODO: check if its real admin's domain and email
-		return this.storage.values().stream().map(this.converter::convertToBoundary).toArray(UserBoundary[]::new);
+		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 
 	}
 
