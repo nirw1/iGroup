@@ -65,7 +65,7 @@ public class AdminController {
 	)
 	public ActivityBoundary[] getActivities(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		return this.activitiesService.gatAllActivities(userDomain, userEmail).toArray(new ActivityBoundary[0]);
+		return this.activitiesService.getAllActivities(userDomain, userEmail).toArray(new ActivityBoundary[0]);
 	}
 
 }
