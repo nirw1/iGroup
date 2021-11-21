@@ -126,7 +126,7 @@ public class UsersServiceMockup implements UsersService {
 	}
 
 	@Override
-	public List<UserBoundary> getAllUser(String adminDomain, String adminEmail) {
+	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
 		// TODO: check if its real admin's domain and email
 		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 
