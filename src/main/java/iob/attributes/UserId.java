@@ -1,6 +1,8 @@
 package iob.attributes;
 
-public class UserId {
+import java.io.Serializable;
+
+public class UserId implements Serializable{
 	private String domain;
 	private String email;
 
