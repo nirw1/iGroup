@@ -95,12 +95,12 @@ public class InstancesServiceMockup implements InstancesService {
 			existing.setLongitude(update.getLocation().getLng());
 			dirty = true;
 		}
-
+		
 		if (update.getName() != null) {
 			existing.setName(update.getName());
 			dirty = true;
 		}
-
+		
 		if (update.getType() != null) {
 			existing.setType(update.getType());
 			dirty = true;
@@ -123,7 +123,11 @@ public class InstancesServiceMockup implements InstancesService {
 
 	@Override
 	public List<InstanceBoundary> getAllInstances(String userDomain, String userEmail) {
-		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
+		return this.storage
+				.values()
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -136,7 +140,7 @@ public class InstancesServiceMockup implements InstancesService {
 			throw new NotFoundException(
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 		}
-
+		
 		return this.converter.convertToBoundary(entity);
 	}
 
