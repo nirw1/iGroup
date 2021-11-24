@@ -75,12 +75,6 @@ public class InstancesServiceMockup implements InstancesService {
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 		}
 
-		String createdBy = new CreatedBy(new UserId(userDomain, userEmail)).toString();
-		if (!existing.getCreatedBy().equals(createdBy)) {
-			throw new RuntimeException("The requested instance was created by: " + existing.getCreatedBy()
-					+ " but requested update for: " + createdBy);
-		}
-
 		// if entity exists update only non null fields from updatedMessage
 		boolean dirty = false;
 		if (update.getActive() != null) {
@@ -102,6 +96,16 @@ public class InstancesServiceMockup implements InstancesService {
 			dirty = true;
 		}
 
+		if (update.getName() != null) {
+			existing.setName(update.getName());
+			dirty = true;
+		}
+
+		if (update.getType() != null) {
+			existing.setType(update.getType());
+			dirty = true;
+		}
+
 		if (dirty) {
 			// update map => db update mockup
 			this.storage.put(key, existing);
@@ -119,15 +123,7 @@ public class InstancesServiceMockup implements InstancesService {
 
 	@Override
 	public List<InstanceBoundary> getAllInstances(String userDomain, String userEmail) {
-		String createdBy = new CreatedBy(new UserId(userDomain, userEmail)).toString();
-		return this.storage // Map<String, InstanceEntity>
-				.values() // Collection<InstanceEntity>
-				.stream() // Stream<InstanceEntity>
-				.filter(i -> i.getCreatedBy().equals(createdBy)) // filter only instances created by userEmail @
-																	// userDomain
-				.map(this.converter::convertToBoundary) // method reference that converts each boundary to entity and
-														// resulting Stream<InstanceEntity>
-				.collect(Collectors.toList()); // List<InstanceEntity>
+		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
 	@Override
@@ -139,12 +135,6 @@ public class InstancesServiceMockup implements InstancesService {
 		if (entity == null) {
 			throw new NotFoundException(
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
-		}
-
-		String createdBy = new CreatedBy(new UserId(userDomain, userEmail)).toString();
-		if (!entity.getCreatedBy().equals(createdBy)) {
-			throw new RuntimeException("The requested instance was created by: " + entity.getCreatedBy()
-					+ " but requested for: " + createdBy);
 		}
 
 		return this.converter.convertToBoundary(entity);

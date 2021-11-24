@@ -57,9 +57,7 @@ public class ActivitiesServiceMockup implements ActivitiesService {
 
 	@Override
 	public List<ActivityBoundary> getAllActivities(String adminDomain, String adminEmail) {
-		String invokeBy = new CreatedBy(new UserId(adminDomain, adminEmail)).toString();
-		return this.storage.values().stream().filter(i -> i.getInvokedBy().equals(invokeBy))
-				.map(this.converter::convertToBoundary).collect(Collectors.toList());
+		return this.storage.values().stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
 	@Override
