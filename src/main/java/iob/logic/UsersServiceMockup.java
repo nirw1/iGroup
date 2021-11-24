@@ -21,7 +21,7 @@ import iob.errors.UserAlreadyExistsException;
 import iob.errors.NotFoundException;
 import iob.errors.UpdateFailedException;
 
-@Service
+//@Service
 public class UsersServiceMockup implements UsersService {
 	private Map<String, UserEntity> storage;
 	private UserConverter converter;
