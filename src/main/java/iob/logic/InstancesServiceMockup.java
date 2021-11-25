@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import iob.attributes.CreatedBy;
 import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
+import iob.boundaries.InstanceIdBoundary;
 import iob.converters.InstanceConverter;
 import iob.data.InstanceEntity;
 import iob.errors.NotFoundException;
@@ -147,5 +148,76 @@ public class InstancesServiceMockup implements InstancesService {
 	@Override
 	public void deleteAllInstances(String adminDomain, String adminEmail) {
 		this.storage.clear();
+	}
+
+	@Override
+	public void bindChild(String userDomain, String userEmail, String instanceDomain, String instanceId,
+			InstanceIdBoundary childBoundary) {
+		String key = this.converter.convertPropertiesToKey(appName, instanceId);
+		InstanceEntity existing = this.storage.get(key);
+
+		// if original entity doesn't exist -> return http status 404
+		if (existing == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+		
+		String childKey = this.converter.convertPropertiesToKey(appName, childBoundary.getId());
+		InstanceEntity childEntity = this.storage.get(childKey);
+		
+		// if child entity doesn't exist -> return http status 404
+		if (childEntity == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+
+		existing.getChildren().add(childKey); // A value can be added only once to an HashSet
+		this.storage.put(key, existing);
+
+		// read again updated value from map
+		existing = this.storage.get(key);
+		if (existing == null) {
+			throw new RuntimeException("Error while updating database");
+		}
+	}
+
+	@Override
+	public List<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
+			String instanceId) {
+			String key = this.converter.convertPropertiesToKey(instanceDomain, instanceId);
+			InstanceEntity entity = this.storage.get(key);
+	
+			if (entity == null) {
+				throw new NotFoundException(
+						"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+			}
+			
+			// This is inefficient and can be improved, but it's just a mockup
+			return this.storage
+					.values()
+					.stream()
+					.filter(i -> entity.getChildren().contains(this.converter.convertPropertiesToKey(i.getDomain(), i.getId().toString())))
+					.map(this.converter::convertToBoundary)
+					.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
+			String instanceId) {
+		String key = this.converter.convertPropertiesToKey(instanceDomain, instanceId);
+		InstanceEntity entity = this.storage.get(key);
+
+		if (entity == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+		
+		// This is inefficient and can be improved, but it's just a mockup
+		return this.storage
+				.values()
+				.stream()
+				.filter(i -> i.getChildren().contains(this.converter.convertPropertiesToKey(entity.getDomain(), entity.getId().toString())))
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
 	}
 }

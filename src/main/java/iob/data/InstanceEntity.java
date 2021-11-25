@@ -2,6 +2,7 @@ package iob.data;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 public class InstanceEntity {
 	private Long id;
@@ -14,6 +15,7 @@ public class InstanceEntity {
 	private double latitude;
 	private double longitude;
 	private Map<String, Object> instanceAttributes;
+	private Set<String> children;
 
 	public InstanceEntity() {
 	}
@@ -96,5 +98,13 @@ public class InstanceEntity {
 
 	public void setInstanceAttributes(Map<String, Object> instanceAttributes) {
 		this.instanceAttributes = instanceAttributes;
+	}
+	
+	public Set<String> getChildren() {
+		return children;
+	}
+
+	public void setChildren(Set<String> children) {
+		this.children = children;
 	}
 }

@@ -1,17 +1,17 @@
-package iob.attributes;
+package iob.boundaries;
 
-public class InstanceId {
+public class InstanceIdBoundary {
 	private String domain;
 	private String id;
 
-	public InstanceId() {
+	public InstanceIdBoundary() {
 	}
 
-	public InstanceId(String domain) {
+	public InstanceIdBoundary(String domain) {
 		this.domain = domain;
 	}
 	
-	public InstanceId(String domain, String id) {
+	public InstanceIdBoundary(String domain, String id) {
 		this.domain = domain;
 		this.id = id;
 	}
