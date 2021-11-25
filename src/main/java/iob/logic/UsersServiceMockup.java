@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+//import org.springframework.stereotype.Service;
 
 import iob.boundaries.UserBoundary;
 import iob.converters.UserConverter;
@@ -21,7 +21,7 @@ import iob.errors.UserAlreadyExistsException;
 import iob.errors.NotFoundException;
 import iob.errors.UpdateFailedException;
 
-@Service
+//@Service
 public class UsersServiceMockup implements UsersService {
 	private Map<String, UserEntity> storage;
 	private UserConverter converter;

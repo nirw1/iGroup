@@ -1,7 +1,21 @@
 package iob.data;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import iob.attributes.UserId;
+
+
+@Entity
+@Table(name = "USERS")
+@IdClass(UserId.class)
 public class UserEntity {
+
 	private String domain;
+
 	private String email;
 	private String role;
 	private String username;
@@ -20,6 +34,7 @@ public class UserEntity {
 		this.avatar = avatar;
 	}
 
+	@Id
 	public String getDomain() {
 		return domain;
 	}
@@ -27,7 +42,7 @@ public class UserEntity {
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
-
+	@Id
 	public String getEmail() {
 		return email;
 	}
@@ -59,5 +74,4 @@ public class UserEntity {
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
 	}
-
 }

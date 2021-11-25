@@ -40,8 +40,6 @@ public class InstanceController {
 			@PathVariable("userDomain") String userDomain, @PathVariable("userEmail") String userEmail,
 			@PathVariable("instanceDomain") String instanceDomain, @PathVariable("instanceId") String instanceId) {
 		instancesService.updateInstance(userDomain, userEmail, instanceDomain, instanceId, instanceFromClient);
-		System.err.println("UPDATE INSTANCE - DOMAIN: " + userDomain + " USER: " + userEmail);
-		System.err.println("                  DOMAIN: " + instanceDomain + " USER: " + instanceId);
 	}
 
 	@RequestMapping(
