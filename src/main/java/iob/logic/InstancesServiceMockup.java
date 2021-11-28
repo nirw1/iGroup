@@ -23,7 +23,7 @@ import iob.data.InstanceEntity;
 import iob.errors.NotFoundException;
 
 @Service // declaration of Spring Bean of Business Logic (BL) layer
-public class InstancesServiceMockup implements InstancesService {
+public class InstancesServiceMockup implements InstancesWithChildrenService {
 	private Map<String, InstanceEntity> storage;
 	private InstanceConverter converter;
 	private AtomicLong counter;

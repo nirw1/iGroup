@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.InstanceIdBoundary;
 import iob.logic.InstancesService;
+import iob.logic.InstancesWithChildrenService;
 
 @RestController
 public class InstanceController {
-	private InstancesService instancesService;
+	private InstancesWithChildrenService instancesService;
 
 	@Autowired
-	public InstanceController(InstancesService instancesService) {
+	public InstanceController(InstancesWithChildrenService instancesService) {
 		this.instancesService = instancesService;
 	}
 
