@@ -1,7 +1,9 @@
 package iob.data;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class InstanceEntity {
@@ -15,9 +17,12 @@ public class InstanceEntity {
 	private double latitude;
 	private double longitude;
 	private Map<String, Object> instanceAttributes;
-	private Set<String> children;
+	private Set<InstanceEntity> children;
+	private Set<InstanceEntity> parents;
 
 	public InstanceEntity() {
+		children = new HashSet<InstanceEntity>();
+		parents = new HashSet<InstanceEntity>();
 	}
 
 	public Long getId() {
@@ -100,11 +105,36 @@ public class InstanceEntity {
 		this.instanceAttributes = instanceAttributes;
 	}
 	
-	public Set<String> getChildren() {
+	public Set<InstanceEntity> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<String> children) {
+	public void setChildren(Set<InstanceEntity> children) {
 		this.children = children;
+	}
+	
+	public Set<InstanceEntity> getParents() {
+		return parents;
+	}
+
+	public void setParents(Set<InstanceEntity> parents) {
+		this.parents = parents;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(domain, id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InstanceEntity other = (InstanceEntity) obj;
+		return Objects.equals(domain, other.domain) && Objects.equals(id, other.id);
 	}
 }

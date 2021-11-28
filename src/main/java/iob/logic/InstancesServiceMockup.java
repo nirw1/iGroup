@@ -153,30 +153,38 @@ public class InstancesServiceMockup implements InstancesService {
 	@Override
 	public void bindChild(String userDomain, String userEmail, String instanceDomain, String instanceId,
 			InstanceIdBoundary childBoundary) {
-		String key = this.converter.convertPropertiesToKey(appName, instanceId);
-		InstanceEntity existing = this.storage.get(key);
+		String parentKey = this.converter.convertPropertiesToKey(appName, instanceId);
+		InstanceEntity parent = this.storage.get(parentKey);
 
 		// if original entity doesn't exist -> return http status 404
-		if (existing == null) {
+		if (parent == null) {
 			throw new NotFoundException(
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 		}
 		
 		String childKey = this.converter.convertPropertiesToKey(appName, childBoundary.getId());
-		InstanceEntity childEntity = this.storage.get(childKey);
+		InstanceEntity child = this.storage.get(childKey);
 		
 		// if child entity doesn't exist -> return http status 404
-		if (childEntity == null) {
+		if (child == null) {
 			throw new NotFoundException(
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 		}
 
-		existing.getChildren().add(childKey); // A value can be added only once to an HashSet
-		this.storage.put(key, existing);
+		parent.getChildren().add(child); // A value can be added only once to an HashSet
+		child.getParents().add(parent); // A value can be added only once to an HashSet
+		
+		this.storage.put(parentKey, parent);
+		this.storage.put(childKey, child);
 
 		// read again updated value from map
-		existing = this.storage.get(key);
-		if (existing == null) {
+		parent = this.storage.get(parentKey);
+		if (parent == null) {
+			throw new RuntimeException("Error while updating database");
+		}
+		
+		child = this.storage.get(childKey);
+		if (child == null) {
 			throw new RuntimeException("Error while updating database");
 		}
 	}
@@ -192,11 +200,8 @@ public class InstancesServiceMockup implements InstancesService {
 						"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 			}
 			
-			// This is inefficient and can be improved, but it's just a mockup
-			return this.storage
-					.values()
+			return entity.getChildren()
 					.stream()
-					.filter(i -> entity.getChildren().contains(this.converter.convertPropertiesToKey(i.getDomain(), i.getId().toString())))
 					.map(this.converter::convertToBoundary)
 					.collect(Collectors.toList());
 	}
@@ -211,12 +216,9 @@ public class InstancesServiceMockup implements InstancesService {
 			throw new NotFoundException(
 					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
 		}
-		
-		// This is inefficient and can be improved, but it's just a mockup
-		return this.storage
-				.values()
+	
+		return entity.getParents()
 				.stream()
-				.filter(i -> i.getChildren().contains(this.converter.convertPropertiesToKey(entity.getDomain(), entity.getId().toString())))
 				.map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
 	}

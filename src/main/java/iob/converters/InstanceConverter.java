@@ -1,7 +1,5 @@
 package iob.converters;
 
-import java.util.HashSet;
-
 import org.springframework.stereotype.Component;
 
 import iob.attributes.CreatedBy;
@@ -53,8 +51,6 @@ public class InstanceConverter {
 
 		entity.setName(boundary.getName());
 		entity.setType(boundary.getType());
-		
-		entity.setChildren(new HashSet<String>());
 
 		return entity;
 	}
