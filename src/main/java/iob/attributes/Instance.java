@@ -1,22 +1,24 @@
 package iob.attributes;
 
+import iob.boundaries.InstanceIdBoundary;
+
 public class Instance {
-	private InstanceId instanceId = null;
+	private InstanceIdBoundary instanceId = null;
 
 	public Instance() {
 
 	}
 
-	public Instance(InstanceId instanceId) {
+	public Instance(InstanceIdBoundary instanceId) {
 		super();
 		this.instanceId = instanceId;
 	}
 
-	public InstanceId getInstanceId() {
+	public InstanceIdBoundary getInstanceId() {
 		return instanceId;
 	}
 
-	public void setInstanceId(InstanceId instanceId) {
+	public void setInstanceId(InstanceIdBoundary instanceId) {
 		this.instanceId = instanceId;
 	}
 

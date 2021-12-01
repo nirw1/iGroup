@@ -17,12 +17,13 @@ import org.springframework.stereotype.Service;
 import iob.attributes.CreatedBy;
 import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
+import iob.boundaries.InstanceIdBoundary;
 import iob.converters.InstanceConverter;
 import iob.data.InstanceEntity;
 import iob.errors.NotFoundException;
 
 @Service // declaration of Spring Bean of Business Logic (BL) layer
-public class InstancesServiceMockup implements InstancesService {
+public class InstancesServiceMockup implements InstancesWithChildrenService {
 	private Map<String, InstanceEntity> storage;
 	private InstanceConverter converter;
 	private AtomicLong counter;
@@ -147,5 +148,78 @@ public class InstancesServiceMockup implements InstancesService {
 	@Override
 	public void deleteAllInstances(String adminDomain, String adminEmail) {
 		this.storage.clear();
+	}
+
+	@Override
+	public void bindChild(String userDomain, String userEmail, String instanceDomain, String instanceId,
+			InstanceIdBoundary childBoundary) {
+		String parentKey = this.converter.convertPropertiesToKey(appName, instanceId);
+		InstanceEntity parent = this.storage.get(parentKey);
+
+		// if original entity doesn't exist -> return http status 404
+		if (parent == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+		
+		String childKey = this.converter.convertPropertiesToKey(appName, childBoundary.getId());
+		InstanceEntity child = this.storage.get(childKey);
+		
+		// if child entity doesn't exist -> return http status 404
+		if (child == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+
+		parent.getChildren().add(child); // A value can be added only once to an HashSet
+		child.getParents().add(parent); // A value can be added only once to an HashSet
+		
+		this.storage.put(parentKey, parent);
+		this.storage.put(childKey, child);
+
+		// read again updated value from map
+		parent = this.storage.get(parentKey);
+		if (parent == null) {
+			throw new RuntimeException("Error while updating database");
+		}
+		
+		child = this.storage.get(childKey);
+		if (child == null) {
+			throw new RuntimeException("Error while updating database");
+		}
+	}
+
+	@Override
+	public List<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
+			String instanceId) {
+			String key = this.converter.convertPropertiesToKey(instanceDomain, instanceId);
+			InstanceEntity entity = this.storage.get(key);
+	
+			if (entity == null) {
+				throw new NotFoundException(
+						"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+			}
+			
+			return entity.getChildren()
+					.stream()
+					.map(this.converter::convertToBoundary)
+					.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
+			String instanceId) {
+		String key = this.converter.convertPropertiesToKey(instanceDomain, instanceId);
+		InstanceEntity entity = this.storage.get(key);
+
+		if (entity == null) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + "in domain: " + instanceDomain);
+		}
+	
+		return entity.getParents()
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
 	}
 }
