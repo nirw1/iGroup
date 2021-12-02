@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import iob.attributes.ActivityId;
 import iob.attributes.CreatedBy;
 import iob.attributes.Instance;
+import iob.attributes.InstanceId;
 import iob.boundaries.ActivityBoundary;
-import iob.boundaries.InstanceIdBoundary;
 import iob.data.ActivityEntity;
 
 @Component
@@ -18,7 +18,7 @@ public class ActivityConverter {
 		boundary.setActivityAttributes(entity.getActivityAttributes());
 		boundary.setActivityId(new ActivityId(entity.getActivityDomain(), entity.getInitId()));
 		boundary.setCreatedTimestamp(entity.getCreatedTimestamp());
-		boundary.setInstance(new Instance(new InstanceIdBoundary(entity.getInstanceDomain(), entity.getInstanceId())));
+		boundary.setInstance(new Instance(new InstanceId(entity.getInstanceDomain(), entity.getInstanceId())));
 		boundary.setInvokedBy(new CreatedBy(entity.getInvokedBy()));
 		boundary.setType(entity.getType());
 		return boundary;

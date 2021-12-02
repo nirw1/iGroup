@@ -6,8 +6,25 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import iob.attributes.InstanceId;
+import iob.converters.MapToStringConverter;
+
+@Entity
+@Table(name = "INSTANCES")
+@IdClass(InstanceId.class)
 public class InstanceEntity {
-	private Long id;
+	private String id;
 	private String domain;
 	private String type;
 	private String name;
@@ -25,14 +42,16 @@ public class InstanceEntity {
 		parents = new HashSet<InstanceEntity>();
 	}
 
-	public Long getId() {
+	@Id
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-
+	
+	@Id
 	public String getDomain() {
 		return domain;
 	}
@@ -65,6 +84,7 @@ public class InstanceEntity {
 		this.active = active;
 	}
 
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getCreatedTimestamp() {
 		return createdTimestamp;
 	}
@@ -97,6 +117,8 @@ public class InstanceEntity {
 		this.longitude = longitude;
 	}
 
+	@Lob
+	@Convert(converter = MapToStringConverter.class)
 	public Map<String, Object> getInstanceAttributes() {
 		return instanceAttributes;
 	}
@@ -105,6 +127,7 @@ public class InstanceEntity {
 		this.instanceAttributes = instanceAttributes;
 	}
 	
+	@ManyToMany(fetch = FetchType.LAZY)
 	public Set<InstanceEntity> getChildren() {
 		return children;
 	}
@@ -113,6 +136,7 @@ public class InstanceEntity {
 		this.children = children;
 	}
 	
+	@ManyToMany(fetch = FetchType.LAZY)
 	public Set<InstanceEntity> getParents() {
 		return parents;
 	}
