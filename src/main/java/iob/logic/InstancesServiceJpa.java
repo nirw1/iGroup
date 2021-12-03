@@ -22,6 +22,7 @@ import iob.boundaries.InstanceIdBoundary;
 import iob.converters.InstanceConverter;
 import iob.daos.InstanceDao;
 import iob.data.InstanceEntity;
+import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
 
 @Service // declaration of Spring Bean of Business Logic (BL) layer
@@ -51,6 +52,11 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 	@Override
 	@Transactional
 	public InstanceBoundary createInstance(String userDomain, String userEmail, InstanceBoundary instance) {
+		
+		if (instance.getType() == null || instance.getType().isEmpty()) {
+			throw new BadRequestException("instance type cannot be empty or null");
+		}
+		
 		InstanceEntity entityToStore = this.converter.convertToEntity(instance);
 		entityToStore.setId(String.valueOf(this.counter.getAndIncrement()));
 		entityToStore.setDomain(this.appName);
@@ -147,8 +153,8 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 				.findById(new InstanceId(appName, childBoundary.getId()))
 				.orElseThrow(()->new NotFoundException("Could not find instance with id: " + childBoundary.getId() + " in domain: " + appName));
 
-		parent.getChildren().add(child); // A value can be added only once to an HashSet
-		child.getParents().add(parent); // A value can be added only once to an HashSet
+		parent.addChildren(child); // A value can be added only once to an HashSet
+		child.addParent(parent); // A value can be added only once to an HashSet
 		
 		parent = this.instanceDao.save(parent);
 		if (parent == null) {

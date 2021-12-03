@@ -136,6 +136,10 @@ public class InstanceEntity {
 		this.children = children;
 	}
 	
+	public void addChildren(InstanceEntity children) {
+		this.children.add(children);
+	}
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	public Set<InstanceEntity> getParents() {
 		return parents;
@@ -143,6 +147,10 @@ public class InstanceEntity {
 
 	public void setParents(Set<InstanceEntity> parents) {
 		this.parents = parents;
+	}
+	
+	public void addParent(InstanceEntity parent) {
+		this.parents.add(parent);
 	}
 	
 	@Override

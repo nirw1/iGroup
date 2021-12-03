@@ -9,10 +9,6 @@ public class InstanceId implements Serializable{
 
 	public InstanceId() {
 	}
-
-	public InstanceId(String domain) {
-		this.domain = domain;
-	}
 	
 	public InstanceId(String domain, String id) {
 		this.domain = domain;

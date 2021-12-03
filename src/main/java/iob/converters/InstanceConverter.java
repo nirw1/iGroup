@@ -1,5 +1,6 @@
 package iob.converters;
 
+import java.util.HashMap;
 import org.springframework.stereotype.Component;
 
 import iob.attributes.CreatedBy;
@@ -37,7 +38,13 @@ public class InstanceConverter {
 		}
 
 		entity.setCreatedTimestamp(boundary.getCreatedTimestamp());
-		entity.setInstanceAttributes(boundary.getInstanceAttributes());
+		
+		if (boundary.getInstanceAttributes() != null) {
+			entity.setInstanceAttributes(boundary.getInstanceAttributes());
+		} else {
+			entity.setInstanceAttributes(new HashMap<String,Object>());
+		}
+		
 
 		// ignore instance Id
 
