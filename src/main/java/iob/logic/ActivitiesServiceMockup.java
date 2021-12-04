@@ -45,10 +45,10 @@ public class ActivitiesServiceMockup implements ActivitiesService {
 	@Override
 	public Object invokeActivity(ActivityBoundary activity) {
 		ActivityEntity entityToStore = this.converter.convertToEntity(activity);
-		entityToStore.setInitId(this.counter.getAndIncrement());
+		entityToStore.setId(this.counter.getAndIncrement());
 		entityToStore.setCreatedTimestamp(new Date());
-		entityToStore.setActivityDomain(appName);
-		String key = this.converter.convertPropertiesToKey(appName, entityToStore.getInitId());
+		entityToStore.setDomain(appName);
+		String key = this.converter.convertPropertiesToKey(appName, entityToStore.getId());
 		this.storage.put(key, entityToStore);
 		return this.converter.convertToBoundary(entityToStore);
 	}

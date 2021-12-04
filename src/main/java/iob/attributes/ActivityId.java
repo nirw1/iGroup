@@ -1,21 +1,18 @@
 package iob.attributes;
 
-public class ActivityId {
+import java.io.Serializable;
+
+public class ActivityId implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String domain;
-	private String id;
+	private long id;
 
 	public ActivityId() {
-
 	}
 
-	public ActivityId(String domain, String id) {
-		this.domain = domain;
-		this.id = id;
-	}
-	
 	public ActivityId(String domain, long id) {
 		this.domain = domain;
-		this.id = String.valueOf(id);
+		this.id = id;
 	}
 
 	public String getDomain() {
@@ -26,11 +23,11 @@ public class ActivityId {
 		this.domain = domain;
 	}
 
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

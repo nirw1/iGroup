@@ -3,9 +3,24 @@ package iob.data;
 import java.util.Date;
 import java.util.Map;
 
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import iob.attributes.ActivityId;
+import iob.converters.MapToStringConverter;
+
+@Entity
+@Table(name = "ACTIVITIES")
+@IdClass(ActivityId.class)
 public class ActivityEntity {
-	private long initId;
-	private String activityDomain;
+	private long id;
+	private String domain;
 	private String instanceDomain;
 	private String instanceId;
 	private String type;
@@ -13,23 +28,38 @@ public class ActivityEntity {
 	private String invokedBy;
 	private Map<String, Object> activityAttributes;
 
+	public ActivityEntity(long id, String domain, String instanceDomain, String instanceId, String type,
+			Date createdTimestamp, String invokedBy, Map<String, Object> activityAttributes) {
+		super();
+		this.id = id;
+		this.domain = domain;
+		this.instanceDomain = instanceDomain;
+		this.instanceId = instanceId;
+		this.type = type;
+		this.createdTimestamp = createdTimestamp;
+		this.invokedBy = invokedBy;
+		this.activityAttributes = activityAttributes;
+	}
+
 	public ActivityEntity() {
 	}
 
-	public long getInitId() {
-		return initId;
+	@Id
+	public long getId() {
+		return id;
 	}
 
-	public void setInitId(long initId) {
-		this.initId = initId;
+	public void setId(long initId) {
+		this.id = initId;
 	}
 
-	public String getActivityDomain() {
-		return activityDomain;
+	@Id
+	public String getDomain() {
+		return domain;
 	}
 
-	public void setActivityDomain(String activityDomain) {
-		this.activityDomain = activityDomain;
+	public void setDomain(String activityDomain) {
+		this.domain = activityDomain;
 	}
 
 	public String getInstanceDomain() {
@@ -56,6 +86,7 @@ public class ActivityEntity {
 		this.type = type;
 	}
 
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getCreatedTimestamp() {
 		return createdTimestamp;
 	}
@@ -72,6 +103,9 @@ public class ActivityEntity {
 		this.invokedBy = invokedBy;
 	}
 
+	// store this value as a very long string
+	@Lob
+	@Convert(converter = MapToStringConverter.class)
 	public Map<String, Object> getActivityAttributes() {
 		return activityAttributes;
 	}
