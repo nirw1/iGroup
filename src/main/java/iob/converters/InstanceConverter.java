@@ -1,11 +1,12 @@
 package iob.converters;
 
+import java.util.HashMap;
 import org.springframework.stereotype.Component;
 
 import iob.attributes.CreatedBy;
+import iob.attributes.InstanceId;
 import iob.attributes.Location;
 import iob.boundaries.InstanceBoundary;
-import iob.boundaries.InstanceIdBoundary;
 import iob.data.InstanceEntity;
 
 @Component
@@ -17,7 +18,7 @@ public class InstanceConverter {
 		boundary.setCreatedBy(new CreatedBy(entity.getCreatedBy()));
 		boundary.setCreatedTimestamp(entity.getCreatedTimestamp());
 		boundary.setInstanceAttributes(entity.getInstanceAttributes());
-		boundary.setInstanceId(new InstanceIdBoundary(entity.getDomain(), entity.getId().toString()));
+		boundary.setInstanceId(new InstanceId(entity.getDomain(), entity.getId().toString()));
 		boundary.setLocation(new Location(entity.getLatitude(), entity.getLongitude()));
 		boundary.setName(entity.getName());
 		boundary.setType(entity.getType());
@@ -37,7 +38,13 @@ public class InstanceConverter {
 		}
 
 		entity.setCreatedTimestamp(boundary.getCreatedTimestamp());
-		entity.setInstanceAttributes(boundary.getInstanceAttributes());
+		
+		if (boundary.getInstanceAttributes() != null) {
+			entity.setInstanceAttributes(boundary.getInstanceAttributes());
+		} else {
+			entity.setInstanceAttributes(new HashMap<String,Object>());
+		}
+		
 
 		// ignore instance Id
 

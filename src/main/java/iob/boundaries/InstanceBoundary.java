@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.Map;
 
 import iob.attributes.CreatedBy;
+import iob.attributes.InstanceId;
 import iob.attributes.Location;
 
 public class InstanceBoundary {
-	private InstanceIdBoundary instanceId;
+	private InstanceId instanceId;
 	private String type;
 	private String name;
 	private Boolean active;
@@ -17,11 +18,11 @@ public class InstanceBoundary {
 	private Map<String, Object> instanceAttributes;
 
 	public InstanceBoundary() {
-		this.instanceId = new InstanceIdBoundary();
+		this.instanceId = new InstanceId();
 		this.createdTimestamp = new Date();
 	}
 
-	public InstanceBoundary(InstanceIdBoundary instanceId, String type, String name, Boolean active, Date createdTimestamp,
+	public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, Date createdTimestamp,
 			CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
 		super();
 		this.instanceId = instanceId;
@@ -34,11 +35,11 @@ public class InstanceBoundary {
 		this.instanceAttributes = instanceAttributes;
 	}
 
-	public InstanceIdBoundary getInstanceId() {
+	public InstanceId getInstanceId() {
 		return instanceId;
 	}
 
-	public void setInstanceId(InstanceIdBoundary instanceId) {
+	public void setInstanceId(InstanceId instanceId) {
 		this.instanceId = instanceId;
 	}
 
