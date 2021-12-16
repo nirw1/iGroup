@@ -11,8 +11,12 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import iob.attributes.CreatedBy;
 import iob.attributes.InstanceId;
@@ -26,7 +30,7 @@ import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
 
 @Service // declaration of Spring Bean of Business Logic (BL) layer
-public class InstancesServiceJpa implements InstancesWithChildrenService {
+public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService {
 	private InstanceDao instanceDao;
 	private InstanceConverter converter;
 	private AtomicLong counter;
@@ -57,6 +61,10 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 			throw new BadRequestException("instance type cannot be empty or null");
 		}
 		
+		if (instance.getName() == null || instance.getName().isEmpty()) {
+			throw new BadRequestException("instance name cannot be empty or null");
+		}
+		
 		InstanceEntity entityToStore = this.converter.convertToEntity(instance);
 		entityToStore.setId(String.valueOf(this.counter.getAndIncrement()));
 		entityToStore.setDomain(this.appName);
@@ -75,43 +83,34 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 			.findById(new InstanceId(instanceDomain, instanceId))
 			.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
 
-		// if entity exists update only non null fields from updatedMessage
-		boolean dirty = false;
 		if (update.getActive() != null) {
 			existing.setActive(update.getActive());
-			dirty = true;
 		}
 
 		// Note that id, domain, createdBy and timestamp must not be changed using PUT operation
 
 		if (update.getInstanceAttributes() != null) {
 			existing.setInstanceAttributes(update.getInstanceAttributes());
-			dirty = true;
 		}
 
 		if (update.getLocation() != null) {
 			existing.setLatitude(update.getLocation().getLat());
 			existing.setLongitude(update.getLocation().getLng());
-			dirty = true;
 		}
 		
 		if (update.getName() != null) {
 			existing.setName(update.getName());
-			dirty = true;
 		}
 		
 		if (update.getType() != null) {
 			existing.setType(update.getType());
-			dirty = true;
 		}
-
-		if (dirty) {			
-			// DB update ONLY if the data was actually modified
-			existing = this.instanceDao.save(existing);
-			
-			if (existing == null) {
-				throw new RuntimeException("Error while updating database");
-			}
+	
+		// DB update ONLY if the data was actually modified
+		existing = this.instanceDao.save(existing);
+		
+		if (existing == null) {
+			throw new RuntimeException("Error while updating database");
 		}
 
 		// convert entity to boundary and return it
@@ -120,8 +119,16 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 
 	@Override
 	@Transactional(readOnly = true)
+	@Deprecated
 	public List<InstanceBoundary> getAllInstances(String userDomain, String userEmail) {
-		return StreamSupport.stream(this.instanceDao.findAll().spliterator(), false).map(this.converter::convertToBoundary)
+		throw new RuntimeException("Unimplemented deprecated operation");
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<InstanceBoundary> getAllInstances(String userDomain, String userEmail, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "id");
+		return StreamSupport.stream(this.instanceDao.findAll(pageable).spliterator(), false).map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
 	}
 
@@ -169,8 +176,16 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 
 	@Override
 	@Transactional(readOnly = true)
+	@Deprecated
 	public Set<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
 			String instanceId) {
+		throw new RuntimeException("Unimplemented deprecated operation");
+	}
+	
+	@Override
+	public Set<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
+			String instanceId, int page, int size) {
+		// TODO: implement pagination - what we have here is the old implementation
 		InstanceEntity entity = this.instanceDao
 				.findById(new InstanceId(instanceDomain, instanceId))
 				.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
@@ -183,8 +198,16 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 
 	@Override
 	@Transactional(readOnly = true)
+	@Deprecated
 	public Set<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
 			String instanceId) {
+		throw new RuntimeException("Unimplemented deprecated operation");
+	}
+
+	@Override
+	public Set<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
+			String instanceId, int page, int size) {
+		//TODO: implement pagination - what we have here is the old implementation
 		InstanceEntity entity = this.instanceDao
 				.findById(new InstanceId(instanceDomain, instanceId))
 				.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));

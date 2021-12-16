@@ -1,10 +1,9 @@
 package iob.daos;
 
-import org.springframework.data.repository.CrudRepository;
-
+import org.springframework.data.repository.PagingAndSortingRepository;
 import iob.attributes.InstanceId;
 import iob.data.InstanceEntity;
 
-public interface InstanceDao extends CrudRepository<InstanceEntity, InstanceId>{
+public interface InstanceDao extends PagingAndSortingRepository<InstanceEntity, InstanceId>{
 
 }
