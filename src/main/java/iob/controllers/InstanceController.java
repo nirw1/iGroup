@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.InstanceIdBoundary;
 import iob.logic.EnhancedInstancesWithChildrenService;
-import iob.logic.InstancesWithChildrenService;
 
 @RestController
 public class InstanceController {
