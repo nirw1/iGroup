@@ -14,9 +14,8 @@ public class ActivityConverter {
 
 	public ActivityBoundary convertToBoundary(ActivityEntity entity) {
 		ActivityBoundary boundary = new ActivityBoundary();
-
 		boundary.setActivityAttributes(entity.getActivityAttributes());
-		boundary.setActivityId(new ActivityId(entity.getActivityDomain(), entity.getInitId()));
+		boundary.setActivityId(new ActivityId(entity.getDomain(), entity.getId()));
 		boundary.setCreatedTimestamp(entity.getCreatedTimestamp());
 		boundary.setInstance(new Instance(new InstanceId(entity.getInstanceDomain(), entity.getInstanceId())));
 		boundary.setInvokedBy(new CreatedBy(entity.getInvokedBy()));
@@ -28,9 +27,9 @@ public class ActivityConverter {
 		ActivityEntity entity = new ActivityEntity();
 
 		// ActivityAttributes
-		if (boundary.getActivityAttributes() != null)
+		if (boundary.getActivityAttributes() != null) {
 			entity.setActivityAttributes(boundary.getActivityAttributes());
-		else
+		} else
 			entity.setActivityAttributes(null);
 
 		// TimeStamp
@@ -43,23 +42,22 @@ public class ActivityConverter {
 		if (boundary.getInstance() != null) {
 			entity.setInstanceDomain(boundary.getInstance().domain());
 			entity.setInstanceId(boundary.getInstance().id());
-		}
-		else {
-			entity.setInstanceDomain(null);
-			entity.setInstanceId(null);
+		} else {
+			entity.setInstanceDomain("");
+			entity.setInstanceId("");
 		}
 
 		// InvokedBy
 		if (boundary.getInvokedBy() != null)
 			entity.setInvokedBy(boundary.getInvokedBy().toString());
 		else
-			entity.setInvokedBy(null);
+			entity.setInvokedBy("");
 
 		// Type
 		if (boundary.getType() != null)
 			entity.setType(boundary.getType());
 		else
-			entity.setType(null);
+			entity.setType("");
 
 		return entity;
 	}

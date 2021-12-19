@@ -4,13 +4,17 @@ import java.util.Map;
 import javax.persistence.AttributeConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MapToStringConverter implements AttributeConverter<Map<String, Object>, String>{
+public class MapToStringConverter implements AttributeConverter<Map<String, Object>, String> {
 	private ObjectMapper jackson;
-	
+
 	public MapToStringConverter() {
 		this.jackson = new ObjectMapper();
 	}
-	
+
+	public MapToStringConverter(ObjectMapper jackson) {
+		this.jackson = jackson;
+	}
+
 	@Override
 	public String convertToDatabaseColumn(Map<String, Object> jsonFromEntity) {
 		// marshalling

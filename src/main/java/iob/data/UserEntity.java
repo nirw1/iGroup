@@ -13,9 +13,7 @@ import iob.attributes.UserId;
 @Table(name = "USERS")
 @IdClass(UserId.class)
 public class UserEntity {
-
 	private String domain;
-
 	private String email;
 	private String role;
 	private String username;
@@ -42,6 +40,7 @@ public class UserEntity {
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
+	
 	@Id
 	public String getEmail() {
 		return email;
