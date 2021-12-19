@@ -184,17 +184,18 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Set<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
+	public List<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
 			String instanceId, int page, int size) {
-		// TODO: implement pagination - what we have here is the old implementation
-		InstanceEntity entity = this.instanceDao
-				.findById(new InstanceId(instanceDomain, instanceId))
-				.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
-		
-		return entity.getChildren()
+		if (!this.instanceDao
+				.existsById(new InstanceId(instanceDomain, instanceId))) {
+				throw new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
+			}
+			
+			return this.instanceDao
+				.findAllByParentsDomainAndParentsId(instanceDomain, instanceId, PageRequest.of(page, size, Direction.DESC, "id"))
 				.stream()
 				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -207,16 +208,17 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional(readOnly = true)
-	public Set<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
-			String instanceId, int page, int size) {
-		//TODO: implement pagination - what we have here is the old implementation
-		InstanceEntity entity = this.instanceDao
-				.findById(new InstanceId(instanceDomain, instanceId))
-				.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
-		
-		return entity.getParents()
+	public List<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
+			String instanceId, int page, int size) {		
+		if (!this.instanceDao
+				.existsById(new InstanceId(instanceDomain, instanceId))) {
+				throw new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
+			}
+			
+			return this.instanceDao
+				.findAllByChildrenDomainAndChildrenId(instanceDomain, instanceId, PageRequest.of(page, size, Direction.DESC, "id"))
 				.stream()
 				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 	}
 }
