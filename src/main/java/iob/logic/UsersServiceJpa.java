@@ -19,16 +19,17 @@ import iob.daos.UserDao;
 import iob.data.UserEntity;
 import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
+import iob.errors.UserAlreadyExistsException;
 
 @Service
-public class UsersLogicJpa implements UsersService {
+public class UsersServiceJpa implements UsersService {
 	private UserDao userDao;
 	private UserConverter converter;
 	private final String emailRegex = "^(.+)@(.+)$";
 	private String appName;
 
 	@Autowired
-	public UsersLogicJpa(UserDao userDao, UserConverter converter) {
+	public UsersServiceJpa(UserDao userDao, UserConverter converter) {
 		this.userDao = userDao;
 		this.converter = converter;
 	}
@@ -41,27 +42,35 @@ public class UsersLogicJpa implements UsersService {
 	@Override
 	@Transactional // (readOnly = false)
 	public UserBoundary createUser(UserBoundary user) {
-		// checking if email address is valid
-		Pattern pattern = Pattern.compile(emailRegex);
-		Matcher matcher = pattern.matcher(user.getUserId().getEmail());
+		user.getUserId().setDomain(appName);
+		Optional<UserEntity> op = this.userDao.findById(user.getUserId());
+		if (op.isPresent()) {
+			throw new UserAlreadyExistsException(
+					user.getUserId().getEmail() + " already exist in domain " + user.getUserId().getDomain());
+		} else {
 
-		// if not matching, throw exception
-		if (!matcher.matches()) {
-			throw new RuntimeException("Invalid email provided");
-		}
+			// checking if email address is valid
+			Pattern pattern = Pattern.compile(emailRegex);
+			Matcher matcher = pattern.matcher(user.getUserId().getEmail());
 
-		if (user.getUsername() == null || user.getUsername().isEmpty()) {
-			throw new BadRequestException("username cannot be empty or null");
-		}
-		
-		if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
-			throw new BadRequestException("avatar cannot be empty or null");
-		}
+			// if not matching, throw exception
+			if (!matcher.matches()) {
+				throw new RuntimeException("Invalid email provided");
+			}
 
-		UserEntity entityToStore = this.converter.convertToEntity(user);
-		entityToStore.setDomain(appName);
-		this.userDao.save(entityToStore);
-		return this.converter.convertToBoundary(entityToStore);
+			if (user.getUsername() == null || user.getUsername().isEmpty()) {
+				throw new BadRequestException("username cannot be empty or null");
+			}
+
+			if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
+				throw new BadRequestException("avatar cannot be empty or null");
+			}
+
+			UserEntity entityToStore = this.converter.convertToEntity(user);
+			entityToStore.setDomain(appName);
+			this.userDao.save(entityToStore);
+			return this.converter.convertToBoundary(entityToStore);
+		}
 	}
 
 	@Override
@@ -78,6 +87,7 @@ public class UsersLogicJpa implements UsersService {
 	}
 
 	@Override
+	@Transactional
 	public UserBoundary updateUser(String userDomain, String userEmail, UserBoundary update) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(userDomain, userEmail));
 		if (op.isPresent()) {
@@ -111,6 +121,7 @@ public class UsersLogicJpa implements UsersService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
 		this.userDao.deleteAll();
 	}

@@ -1,6 +1,7 @@
 package iob.attributes;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ActivityId implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -29,6 +30,23 @@ public class ActivityId implements Serializable {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(domain, id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ActivityId other = (ActivityId) obj;
+		return Objects.equals(domain, other.domain) && id == other.id;
 	}
 
 }

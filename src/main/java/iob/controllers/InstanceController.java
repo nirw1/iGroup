@@ -6,18 +6,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.InstanceIdBoundary;
-import iob.logic.InstancesWithChildrenService;
+import iob.logic.EnhancedInstancesWithChildrenService;
 
 @RestController
 public class InstanceController {
-	private InstancesWithChildrenService instancesService;
+	private EnhancedInstancesWithChildrenService instancesService;
 
 	@Autowired
-	public InstanceController(InstancesWithChildrenService instancesService) {
+	public InstanceController(EnhancedInstancesWithChildrenService instancesService) {
 		this.instancesService = instancesService;
 	}
 
@@ -60,8 +61,10 @@ public class InstanceController {
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	public InstanceBoundary[] getAllInstances(@PathVariable("userDomain") String userDomain,
-			@PathVariable("userEmail") String userEmail) {
-		return instancesService.getAllInstances(userDomain, userEmail).toArray(new InstanceBoundary[0]);
+			@PathVariable("userEmail") String userEmail,
+			@RequestParam(name="page", required=false, defaultValue = "0") int page,
+			@RequestParam(name="size", required=false, defaultValue = "10") int size) {
+		return instancesService.getAllInstances(userDomain, userEmail, page, size).toArray(new InstanceBoundary[0]);
 	}
 
 	@RequestMapping(
@@ -82,8 +85,10 @@ public class InstanceController {
 	)
 	public InstanceBoundary[] getAllChildren(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail, @PathVariable("instanceDomain") String instanceDomain,
-			@PathVariable("instanceId") String instanceId) {
-		return instancesService.getAllChildren(userDomain, userEmail, instanceDomain, instanceId).toArray(new InstanceBoundary[0]);
+			@PathVariable("instanceId") String instanceId,
+			@RequestParam(name="page", required=false, defaultValue = "0") int page,
+			@RequestParam(name="size", required=false, defaultValue = "10") int size) {
+		return instancesService.getAllChildren(userDomain, userEmail, instanceDomain, instanceId, page, size).toArray(new InstanceBoundary[0]);
 	}
 	
 	@RequestMapping(
@@ -93,7 +98,9 @@ public class InstanceController {
 	)
 	public InstanceBoundary[] getAllParents(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail, @PathVariable("instanceDomain") String instanceDomain,
-			@PathVariable("instanceId") String instanceId) {
-		return instancesService.getAllParents(userDomain, userEmail, instanceDomain, instanceId).toArray(new InstanceBoundary[0]);
+			@PathVariable("instanceId") String instanceId,
+			@RequestParam(name="page", required=false, defaultValue = "0") int page,
+			@RequestParam(name="size", required=false, defaultValue = "10") int size) {
+		return instancesService.getAllParents(userDomain, userEmail, instanceDomain, instanceId, page, size).toArray(new InstanceBoundary[0]);
 	}
 }
