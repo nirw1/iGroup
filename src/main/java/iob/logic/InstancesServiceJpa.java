@@ -2,6 +2,7 @@ package iob.logic;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -78,43 +79,43 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	@Override
 	@Transactional
 	public InstanceBoundary updateInstance(String userDomain, String userEmail, String instanceDomain,
-			String instanceId, InstanceBoundary update) {		
-		InstanceEntity existing = this.instanceDao
-			.findById(new InstanceId(instanceDomain, instanceId))
-			.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
+			String instanceId, InstanceBoundary update) {
+		Optional<InstanceEntity> op = this.instanceDao.findById(new InstanceId(instanceDomain, instanceId));
+		if (op.isPresent()) {
+			InstanceEntity existing = op.get();
 
-		if (update.getActive() != null) {
-			existing.setActive(update.getActive());
+			if (update.getActive() != null) {
+				existing.setActive(update.getActive());
+			}
+
+			// Note that id, domain, createdBy and timestamp must not be changed using PUT
+			// operation
+
+			if (update.getInstanceAttributes() != null) {
+				existing.setInstanceAttributes(update.getInstanceAttributes());
+			}
+
+			if (update.getLocation() != null) {
+				existing.setLatitude(update.getLocation().getLat());
+				existing.setLongitude(update.getLocation().getLng());
+			}
+
+			if (update.getName() != null && !update.getName().isEmpty()) {
+				existing.setName(update.getName());
+			}
+
+			if (update.getType() != null) {
+				existing.setType(update.getType());
+			}
+
+			// convert entity to boundary and return it
+			return this.converter.convertToBoundary(this.instanceDao.save(existing));
+
+		} else {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
 		}
 
-		// Note that id, domain, createdBy and timestamp must not be changed using PUT operation
-
-		if (update.getInstanceAttributes() != null) {
-			existing.setInstanceAttributes(update.getInstanceAttributes());
-		}
-
-		if (update.getLocation() != null) {
-			existing.setLatitude(update.getLocation().getLat());
-			existing.setLongitude(update.getLocation().getLng());
-		}
-		
-		if (update.getName() != null) {
-			existing.setName(update.getName());
-		}
-		
-		if (update.getType() != null) {
-			existing.setType(update.getType());
-		}
-	
-		// DB update ONLY if the data was actually modified
-		existing = this.instanceDao.save(existing);
-		
-		if (existing == null) {
-			throw new RuntimeException("Error while updating database");
-		}
-
-		// convert entity to boundary and return it
-		return this.converter.convertToBoundary(existing);
 	}
 
 	@Override
