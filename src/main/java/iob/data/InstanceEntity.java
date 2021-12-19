@@ -140,7 +140,7 @@ public class InstanceEntity {
 		this.children.add(children);
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy = "children", fetch = FetchType.LAZY)
 	public Set<InstanceEntity> getParents() {
 		return parents;
 	}
