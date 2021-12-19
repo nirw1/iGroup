@@ -21,14 +21,14 @@ import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
 
 @Service
-public class UsersLogicJpa implements UsersService {
+public class UsersServiceJpa implements UsersService {
 	private UserDao userDao;
 	private UserConverter converter;
 	private final String emailRegex = "^(.+)@(.+)$";
 	private String appName;
 
 	@Autowired
-	public UsersLogicJpa(UserDao userDao, UserConverter converter) {
+	public UsersServiceJpa(UserDao userDao, UserConverter converter) {
 		this.userDao = userDao;
 		this.converter = converter;
 	}
