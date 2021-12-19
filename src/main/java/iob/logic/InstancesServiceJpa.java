@@ -73,7 +73,7 @@ public class InstancesServiceJpa implements InstancesWithChildrenService {
 			String instanceId, InstanceBoundary update) {		
 		InstanceEntity existing = this.instanceDao
 			.findById(new InstanceId(instanceDomain, instanceId))
-			.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + "in domain: " + instanceDomain));
+			.orElseThrow(()->new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain));
 
 		// if entity exists update only non null fields from updatedMessage
 		boolean dirty = false;
