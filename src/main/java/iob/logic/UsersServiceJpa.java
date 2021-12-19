@@ -78,6 +78,7 @@ public class UsersServiceJpa implements UsersService {
 	}
 
 	@Override
+	@Transactional
 	public UserBoundary updateUser(String userDomain, String userEmail, UserBoundary update) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(userDomain, userEmail));
 		if (op.isPresent()) {
@@ -111,6 +112,7 @@ public class UsersServiceJpa implements UsersService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
 		this.userDao.deleteAll();
 	}

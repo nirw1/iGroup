@@ -184,6 +184,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Set<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
 			String instanceId, int page, int size) {
 		// TODO: implement pagination - what we have here is the old implementation
@@ -206,6 +207,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Set<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
 			String instanceId, int page, int size) {
 		//TODO: implement pagination - what we have here is the old implementation
