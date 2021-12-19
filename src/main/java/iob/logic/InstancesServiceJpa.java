@@ -221,4 +221,26 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 				.map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
 	}
+
+	@Override
+	public List<InstanceBoundary> getByName(String userDomain, String userEmail, String name, int page, int size) {
+		throw new RuntimeException("Not implemented operation");
+	}
+
+	@Override
+	public List<InstanceBoundary> getByType(String userDomain, String userEmail, String type, int page, int size) {
+		throw new RuntimeException("Not implemented operation");
+	}
+
+	@Override
+	public List<InstanceBoundary> getByLocation(String userDomain, String userEmail, String lat, String lng,
+			String distance, int page, int size) {
+		throw new RuntimeException("Not implemented operation");
+	}
+
+	@Override
+	public List<InstanceBoundary> getByCreationTime(String userDomain, String userEmail, String creationWindow,
+			int page, int size) {
+		throw new RuntimeException("Not implemented operation");
+	}
 }
