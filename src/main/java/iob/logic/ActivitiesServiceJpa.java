@@ -17,13 +17,13 @@ import iob.data.ActivityEntity;
 import iob.errors.BadRequestException;
 
 @Service
-public class ActivitiesLogicJpa implements ActivitiesService {
+public class ActivitiesServiceJpa implements ActivitiesService {
 	private ActivityDao activityDao;
 	private ActivityConverter converter;
 	private String appName;
 
 	@Autowired
-	public ActivitiesLogicJpa(ActivityDao activityDao, ActivityConverter converter) {
+	public ActivitiesServiceJpa(ActivityDao activityDao, ActivityConverter converter) {
 		this.activityDao = activityDao;
 		this.converter = converter;
 	}
