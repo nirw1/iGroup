@@ -19,6 +19,7 @@ import iob.daos.UserDao;
 import iob.data.UserEntity;
 import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
+import iob.errors.UserAlreadyExistsException;
 
 @Service
 public class UsersServiceJpa implements UsersService {
@@ -41,27 +42,35 @@ public class UsersServiceJpa implements UsersService {
 	@Override
 	@Transactional // (readOnly = false)
 	public UserBoundary createUser(UserBoundary user) {
-		// checking if email address is valid
-		Pattern pattern = Pattern.compile(emailRegex);
-		Matcher matcher = pattern.matcher(user.getUserId().getEmail());
+		user.getUserId().setDomain(appName);
+		Optional<UserEntity> op = this.userDao.findById(user.getUserId());
+		if (op.isPresent()) {
+			throw new UserAlreadyExistsException(
+					user.getUserId().getEmail() + " already exist in domain " + user.getUserId().getDomain());
+		} else {
 
-		// if not matching, throw exception
-		if (!matcher.matches()) {
-			throw new RuntimeException("Invalid email provided");
-		}
+			// checking if email address is valid
+			Pattern pattern = Pattern.compile(emailRegex);
+			Matcher matcher = pattern.matcher(user.getUserId().getEmail());
 
-		if (user.getUsername() == null || user.getUsername().isEmpty()) {
-			throw new BadRequestException("username cannot be empty or null");
-		}
-		
-		if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
-			throw new BadRequestException("avatar cannot be empty or null");
-		}
+			// if not matching, throw exception
+			if (!matcher.matches()) {
+				throw new RuntimeException("Invalid email provided");
+			}
 
-		UserEntity entityToStore = this.converter.convertToEntity(user);
-		entityToStore.setDomain(appName);
-		this.userDao.save(entityToStore);
-		return this.converter.convertToBoundary(entityToStore);
+			if (user.getUsername() == null || user.getUsername().isEmpty()) {
+				throw new BadRequestException("username cannot be empty or null");
+			}
+
+			if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
+				throw new BadRequestException("avatar cannot be empty or null");
+			}
+
+			UserEntity entityToStore = this.converter.convertToEntity(user);
+			entityToStore.setDomain(appName);
+			this.userDao.save(entityToStore);
+			return this.converter.convertToBoundary(entityToStore);
+		}
 	}
 
 	@Override
