@@ -13,13 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import iob.boundaries.ActivityBoundary;
 import iob.converters.ActivityConverter;
 import iob.daos.ActivityDao;
+import iob.daos.IdGeneratorDao;
 import iob.daos.InstanceDao;
 import iob.daos.UserDao;
 import iob.data.ActivityEntity;
+import iob.data.IdGenerator;
 import iob.errors.BadRequestException;
 
 @Service
 public class ActivitiesServiceJpa implements ActivitiesService {
+	private IdGeneratorDao idGenerator;
 	private InstanceDao instanceDao;
 	private UserDao userDao;
 	private ActivityDao activityDao;
@@ -28,11 +31,12 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Autowired
 	public ActivitiesServiceJpa(InstanceDao instanceDao, UserDao userDao, ActivityDao activityDao,
-			ActivityConverter converter) {
+			ActivityConverter converter,IdGeneratorDao idGenerator) {
 		this.instanceDao = instanceDao;
 		this.userDao = userDao;
 		this.activityDao = activityDao;
 		this.converter = converter;
+		this.idGenerator = idGenerator;
 	}
 
 	@Value("${spring.application.name}") // read this value from Spring Configuration
@@ -72,6 +76,11 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 		ActivityEntity entityToStore = this.converter.convertToEntity(activity);
 		entityToStore.setDomain(appName);
+		
+		IdGenerator id = new IdGenerator();
+		id = this.idGenerator.save(id);
+		entityToStore.setId(id.getId());
+		
 		entityToStore.setCreatedTimestamp(new Date());
 		entityToStore = this.activityDao.save(entityToStore);
 		return this.converter.convertToBoundary(entityToStore);
