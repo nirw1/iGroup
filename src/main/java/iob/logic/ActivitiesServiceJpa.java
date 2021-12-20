@@ -80,6 +80,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 		IdGenerator id = new IdGenerator();
 		id = this.idGenerator.save(id);
 		entityToStore.setId(id.getId());
+		this.idGenerator.delete(id);
 		
 		entityToStore.setCreatedTimestamp(new Date());
 		entityToStore = this.activityDao.save(entityToStore);

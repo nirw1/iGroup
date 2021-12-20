@@ -36,8 +36,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	private String appName;
 
 	@Autowired
-	public InstancesServiceJpa(InstanceDao instanceDao, InstanceConverter converter,
-			IdGeneratorDao idGenerator) {
+	public InstancesServiceJpa(InstanceDao instanceDao, InstanceConverter converter, IdGeneratorDao idGenerator) {
 		this.instanceDao = instanceDao;
 		this.converter = converter;
 		this.idGenerator = idGenerator;
@@ -62,10 +61,11 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 		InstanceEntity entityToStore = this.converter.convertToEntity(instance);
 		IdGenerator id = new IdGenerator();
-		
-		id = idGenerator.save(id);
+
+		id = this.idGenerator.save(id);
 		entityToStore.setId(String.valueOf(id.getId()));
-		
+		this.idGenerator.delete(id);
+
 		entityToStore.setDomain(this.appName);
 		entityToStore.setCreatedBy(new CreatedBy(new UserId(userDomain, userEmail)).toString());
 		entityToStore.setCreatedTimestamp(new Date());
