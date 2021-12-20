@@ -1,5 +1,6 @@
 package iob.logic;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ import iob.boundaries.UserBoundary;
 import iob.converters.UserConverter;
 import iob.daos.UserDao;
 import iob.data.UserEntity;
+import iob.data.UserRole;
 import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
 import iob.errors.UserAlreadyExistsException;
@@ -116,14 +118,36 @@ public class UsersServiceJpa implements UsersService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
-		return StreamSupport.stream(this.userDao.findAll().spliterator(), false).map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
+		if (op.isPresent()) {
+			UserEntity entity = op.get();
+			if (entity.getRole().equals(UserRole.ADMIN.toString())) {
+				return StreamSupport.stream(this.userDao.findAll().spliterator(), false)
+						.map(this.converter::convertToBoundary).collect(Collectors.toList());
+			} else {
+				return Collections.emptyList();
+			}
+
+		} else {
+			throw new NotFoundException("User " + adminEmail + " not found in domain " + adminDomain);
+		}
+
 	}
 
 	@Override
 	@Transactional
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
-		this.userDao.deleteAll();
+		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
+		if (op.isPresent()) {
+			UserEntity entity = op.get();
+			if (entity.getRole().equals(UserRole.ADMIN.toString())) {
+				this.userDao.deleteAll();
+			}
+
+		} else {
+			throw new NotFoundException("User " + adminEmail + " not found in domain " + adminDomain);
+		}
+
 	}
 
 }
