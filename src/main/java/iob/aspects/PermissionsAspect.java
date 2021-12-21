@@ -23,7 +23,7 @@ public class PermissionsAspect {
 	private UsersServiceJpa userService;
 
 	@Around("@annotation(iob.annotations.RolePermission)")
-	public Object permissionProxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	public void permissionProxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		Method method = ((MethodSignature) proceedingJoinPoint.getSignature()).getMethod();
 		RolePermission ann = method.getAnnotation(RolePermission.class);
 		UserRole[] accessRole = ann.roles();
@@ -34,8 +34,7 @@ public class PermissionsAspect {
 		UserRole userRole = this.userService.getUserRole(domain, email);
 		if (Arrays.asList(accessRole).contains(userRole)) {
 			try {
-				Object retVal = proceedingJoinPoint.proceed();
-				return retVal;
+				proceedingJoinPoint.proceed();
 			} catch (Throwable e) {
 				throw e;
 			}
