@@ -224,23 +224,69 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	public List<InstanceBoundary> getByName(String userDomain, String userEmail, String name, int page, int size) {
-		throw new RuntimeException("Not implemented operation");
+		List<InstanceBoundary> result = this.instanceDao.findAllByName(name, PageRequest.of(page, size, Direction.DESC, "name"))
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
+		if(result.isEmpty())
+			throw new NotFoundException("Could not find instance with name: " + name + " on page: " + page);
+		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByType(String userDomain, String userEmail, String type, int page, int size) {
-		throw new RuntimeException("Not implemented operation");
+		List<InstanceBoundary> result = this.instanceDao.findAllByType(type, PageRequest.of(page, size, Direction.DESC, "type"))
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
+		if(result.isEmpty())
+			throw new NotFoundException("Could not find instance with type: " + type + " on page: " + page);
+		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByLocation(String userDomain, String userEmail, String lat, String lng,
 			String distance, int page, int size) {
-		throw new RuntimeException("Not implemented operation");
+		long latLong = Long.valueOf(lat);
+		long lngLong = Long.valueOf(lng);
+		long distanceLong = Long.valueOf(distance);
+		long maxLat = latLong + (distanceLong/2);
+		long minLat = latLong - (distanceLong/2);
+		long maxLng = lngLong + (distanceLong/2);
+		long minLng = lngLong - (distanceLong/2);
+		List<InstanceBoundary> result = this.instanceDao.findAllByLatitudeLessThanEqualAndLatitudeGreaterThanEqualAndLongitudeLessThanEqualAndLongitudeGreaterThanEqual(maxLat, minLat, maxLng, minLng, PageRequest.of(page, size, Direction.DESC, "latitude", "longitude"))
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
+		if(result.isEmpty())
+			throw new NotFoundException("Could not find instance with location: " + lat + "," + lng + " with distance: " + distance + " on page: " + page);
+		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByCreationTime(String userDomain, String userEmail, String creationWindow,
 			int page, int size) {
+		/*
+		List<InstanceBoundary> result;
+		switch(creationWindow) {
+			case "LAST_HOUR":
+				break;
+				
+			case "LAST_24_HOURS":
+				break;
+				
+			case "LAST_7_DAYS":
+				break;
+				
+			case "LAST_30_DAYS":
+				break;	
+		}
+		
+		if(result.isEmpty())
+			throw new NotFoundException("Could not find instance with creationWindow: " + creationWindow + " on page:" + page);
+		return result;
+		*/
 		throw new RuntimeException("Not implemented operation");
+
 	}
 }
