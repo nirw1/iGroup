@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.assertj.core.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +26,13 @@ public class PermissionsAspect {
 	public Object permissionProxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		Method method = ((MethodSignature) proceedingJoinPoint.getSignature()).getMethod();
 		RolePermission ann = method.getAnnotation(RolePermission.class);
-		UserRole accessRole = ann.role();
+		UserRole[] accessRole = ann.roles();
 
 		Object args[] = proceedingJoinPoint.getArgs();
 		String domain = "" + args[0];
 		String email = "" + args[1];
 		UserRole userRole = this.userService.getUserRole(domain, email);
-		if (userRole == accessRole) {
+		if (Arrays.asList(accessRole).contains(userRole)) {
 			try {
 				Object retVal = proceedingJoinPoint.proceed();
 				return retVal;

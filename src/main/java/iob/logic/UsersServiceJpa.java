@@ -118,7 +118,7 @@ public class UsersServiceJpa implements EnhancedUserService {
 
 	@Override
 	@Transactional(readOnly = true)
-	@RolePermission(role=UserRole.ADMIN)
+	@RolePermission(roles = { UserRole.ADMIN })
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
 		if (op.isPresent()) {
@@ -138,7 +138,7 @@ public class UsersServiceJpa implements EnhancedUserService {
 
 	@Override
 	@Transactional
-	@RolePermission(role=UserRole.ADMIN)
+	@RolePermission(roles = { UserRole.ADMIN })
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
 		if (op.isPresent()) {

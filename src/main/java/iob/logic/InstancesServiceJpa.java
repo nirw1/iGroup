@@ -144,7 +144,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional
-	@RolePermission(role = UserRole.ADMIN)
+	@RolePermission(roles = UserRole.ADMIN)
 	public void deleteAllInstances(String adminDomain, String adminEmail) {
 		this.instanceDao.deleteAll();
 	}

@@ -98,7 +98,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Override
 	@Transactional // (readOnly = false)
-	@RolePermission(role = UserRole.ADMIN)
+	@RolePermission(roles = { UserRole.ADMIN })
 	public void deleteAllActivities(String adminDomain, String adminEmail) {
 		this.activityDao.deleteAll();
 

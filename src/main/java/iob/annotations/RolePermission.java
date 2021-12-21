@@ -11,5 +11,5 @@ import iob.data.UserRole;
 @Retention(RUNTIME)
 @Target(METHOD)
 public @interface RolePermission {
-	UserRole role() default UserRole.ADMIN;
+	UserRole[] roles() default { UserRole.ADMIN };
 }
