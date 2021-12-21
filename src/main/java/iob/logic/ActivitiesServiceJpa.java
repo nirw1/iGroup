@@ -91,6 +91,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Override
 	@Transactional(readOnly = true)
+	@RolePermission(roles = UserRole.ADMIN)
 	public List<ActivityBoundary> getAllActivities(String adminDomain, String adminEmail) {
 		return StreamSupport.stream(this.activityDao.findAll().spliterator(), false)
 				.map(this.converter::convertToBoundary).collect(Collectors.toList());
