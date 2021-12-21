@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
 import iob.attributes.UserId;
+import iob.boundaries.ActivityBoundary;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.ActivityEntity;
@@ -55,10 +56,10 @@ public class AdminActivitiesTests {
 		ActivityEntity entity = new ActivityEntity();
 		entity.setId(1);
 		entity.setDomain("DOMAIN");
+//		entity.setInvokedBy("USER");
 		this.testingService.getActivityDao().save(entity);
 	}
 
-//
 	@AfterEach
 	public void deleteAllActivitiesAndUsers() {
 		this.testingService.getUserDao().deleteAll();
@@ -96,6 +97,38 @@ public class AdminActivitiesTests {
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
 			this.client.delete(this.url + this.user);
+		});
+	}
+
+	@Test
+	public void testAdminGetAllActivities() {
+		this.user = this.client
+				.postForObject(this.createUserUrl,
+						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
+				.getUserId();
+		assertThat(this.client.getForObject(this.url + this.user, ActivityBoundary[].class)).hasSizeGreaterThan(0);
+	}
+
+	@Test
+	public void testManagerGetAllActivities() {
+		this.user = this.client.postForObject(this.createUserUrl,
+				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
+				.getUserId();
+
+		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
+		});
+	}
+
+	@Test
+	public void testPlayerGetAllActivities() {
+		this.user = this.client
+				.postForObject(this.createUserUrl,
+						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
+				.getUserId();
+
+		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
 		});
 	}
 }
