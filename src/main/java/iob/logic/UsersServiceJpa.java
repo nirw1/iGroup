@@ -120,19 +120,8 @@ public class UsersServiceJpa implements EnhancedUserService {
 	@Transactional(readOnly = true)
 	@RolePermission(roles = { UserRole.ADMIN })
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
-		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
-		if (op.isPresent()) {
-			UserEntity entity = op.get();
-			if (entity.getRole().equals(UserRole.ADMIN.toString())) {
-				return StreamSupport.stream(this.userDao.findAll().spliterator(), false)
-						.map(this.converter::convertToBoundary).collect(Collectors.toList());
-			} else {
-				return Collections.emptyList();
-			}
-
-		} else {
-			throw new NotFoundException("User " + adminEmail + " not found in domain " + adminDomain);
-		}
+		return StreamSupport.stream(this.userDao.findAll().spliterator(), false).map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
 
 	}
 
@@ -140,25 +129,22 @@ public class UsersServiceJpa implements EnhancedUserService {
 	@Transactional
 	@RolePermission(roles = { UserRole.ADMIN })
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
-		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
-		if (op.isPresent()) {
-			UserEntity entity = op.get();
-			if (entity.getRole().equals(UserRole.ADMIN.toString())) {
-				this.userDao.deleteAll();
-			}
-
-		} else {
-			throw new NotFoundException("User " + adminEmail + " not found in domain " + adminDomain);
-		}
-
+		this.userDao.deleteAll();
 	}
 
 	@Override
 	public UserRole getUserRole(String domain, String email) {
-		return StreamSupport.stream(this.userDao.findAll().spliterator(), false)
-				.filter(user -> user.getDomain().equals(domain) && user.getEmail().equals(email))
-				.map(this.converter::convertToBoundary).collect(Collectors.toList()).get(0).getRole();
-
+		UserRole role = null;
+		try {
+			role = StreamSupport.stream(this.userDao.findAll().spliterator(), false)
+					.filter(user -> user.getDomain().equals(domain) && user.getEmail().equals(email))
+					.map(this.converter::convertToBoundary).collect(Collectors.toList()).get(0).getRole();
+		} catch (IndexOutOfBoundsException e) {
+			throw new NotFoundException(email + " doesn't exist in domain" + domain);
+		} catch (Exception e) {
+			throw new RuntimeException("Error");
+		}
+		return role;
 	}
 
 }
