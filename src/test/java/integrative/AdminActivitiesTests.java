@@ -1,48 +1,38 @@
 package integrative;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-
-import java.util.Date;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
-import iob.attributes.ActivityId;
-import iob.attributes.CreatedBy;
-import iob.attributes.Instance;
-import iob.attributes.InstanceId;
-import iob.attributes.Location;
 import iob.attributes.UserId;
-import iob.boundaries.ActivityBoundary;
-import iob.boundaries.InstanceBoundary;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
+import iob.data.ActivityEntity;
 import iob.data.UserRole;
+import iob.logic.TestingDaoService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
+@Profile("Testing")
 public class AdminActivitiesTests {
 
-	private String createInstanceUrl;
-	private InstanceBoundary instance;
-
-	private String createActivityUrl;
-	private ActivityBoundary activity;
+	@Autowired
+	private TestingDaoService testingService;
 
 	private String createUserUrl;
-	private UserId admin;
-	private UserId manager;
-	private UserId player;
+	private UserId user;
 
 	private String url;
 	private int port;
@@ -57,64 +47,55 @@ public class AdminActivitiesTests {
 	public void postConstruct() {
 		this.url = "http://localhost:" + this.port + "/iob/admin/activities/";
 		this.createUserUrl = "http://localhost:" + this.port + "/iob/users/";
-		this.createActivityUrl = "http://localhost:" + this.port + "/iob/activities/";
-		this.createInstanceUrl = "http://localhost:" + this.port + "/iob/instances/";
 		this.client = new RestTemplate();
-
-		this.admin = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
-				.getUserId();
-
-		this.manager = this.client.postForObject(this.createUserUrl,
-				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
-				.getUserId();
-
-		this.player = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
-				.getUserId();
-
-		this.instance = new InstanceBoundary(null, "Test", "Test", true, null, new CreatedBy(this.admin), null, null);
-		this.instance = this.client.postForObject(this.createInstanceUrl + this.admin, this.instance,
-				InstanceBoundary.class);
-
 	}
 
 	@BeforeEach
 	public void createActivity() {
-		this.admin = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
-				.getUserId();
-		this.activity = new ActivityBoundary(null, new Instance(this.instance.getInstanceId()), "Test", null,
-				new CreatedBy(this.admin), null);
-		this.activity = this.client.postForObject(this.createActivityUrl, this.activity, ActivityBoundary.class);
+		ActivityEntity entity = new ActivityEntity();
+		entity.setId(1);
+		entity.setDomain("DOMAIN");
+		this.testingService.getActivityDao().save(entity);
 	}
 
 //
 	@AfterEach
-	public void deleteAllActivities() {
-		this.client.delete(this.url + this.admin);
+	public void deleteAllActivitiesAndUsers() {
+		this.testingService.getUserDao().deleteAll();
+		this.testingService.getActivityDao().deleteAll();
 	}
 
 	@Test
-	@Transactional
 	public void testAdminDeleteAllActivities() {
-		this.client.delete(this.url + this.admin);
-		assertThat(this.client.getForObject(this.url + this.admin, ActivityBoundary[].class)).hasSize(0);
+		this.user = this.client
+				.postForObject(this.createUserUrl,
+						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
+				.getUserId();
+
+		this.client.delete(this.url + this.user);
+		assertThat(this.testingService.getActivityDao().findAll()).hasSize(0);
 	}
-	
+
 	@Test
-	@Transactional
 	public void testManagerDeleteAllActivities() {
-		this.client.delete(this.url + this.manager);
-		assertThat(this.client.getForObject(this.url + this.admin, ActivityBoundary[].class)).hasSizeGreaterThan(0);
+		this.user = this.client.postForObject(this.createUserUrl,
+				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
+				.getUserId();
+
+		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+			this.client.delete(this.url + this.user);
+		});
 	}
-//	
-//	@Test
-//	public void testPlayerDeleteAllActivities() {
-//		this.client.delete(this.url + this.player);
-//		assertThat(this.client.getForObject(this.url + this.admin, ActivityBoundary[].class)).hasSizeGreaterThan(0);
-//	}
+
+	@Test
+	public void testPlayerDeleteAllActivities() {
+		this.user = this.client
+				.postForObject(this.createUserUrl,
+						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
+				.getUserId();
+
+		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+			this.client.delete(this.url + this.user);
+		});
+	}
 }

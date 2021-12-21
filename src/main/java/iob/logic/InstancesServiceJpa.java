@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import iob.annotations.RolePermission;
 import iob.attributes.CreatedBy;
 import iob.attributes.InstanceId;
 import iob.attributes.UserId;
@@ -24,6 +25,7 @@ import iob.converters.InstanceConverter;
 import iob.daos.InstanceDao;
 import iob.daos.IdGeneratorDao;
 import iob.data.InstanceEntity;
+import iob.data.UserRole;
 import iob.data.IdGenerator;
 import iob.errors.BadRequestException;
 import iob.errors.NotFoundException;
@@ -142,6 +144,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional
+	@RolePermission(role = UserRole.ADMIN)
 	public void deleteAllInstances(String adminDomain, String adminEmail) {
 		this.instanceDao.deleteAll();
 	}

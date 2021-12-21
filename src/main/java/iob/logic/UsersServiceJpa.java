@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import iob.annotations.RolePermission;
 import iob.attributes.UserId;
 import iob.boundaries.UserBoundary;
 import iob.converters.UserConverter;
@@ -24,7 +25,7 @@ import iob.errors.NotFoundException;
 import iob.errors.UserAlreadyExistsException;
 
 @Service
-public class UsersServiceJpa implements UsersService {
+public class UsersServiceJpa implements EnhancedUserService {
 	private UserDao userDao;
 	private UserConverter converter;
 	private final String emailRegex = "^(.+)@(.+)$";
@@ -117,6 +118,7 @@ public class UsersServiceJpa implements UsersService {
 
 	@Override
 	@Transactional(readOnly = true)
+	@RolePermission(role=UserRole.ADMIN)
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
 		if (op.isPresent()) {
@@ -136,6 +138,7 @@ public class UsersServiceJpa implements UsersService {
 
 	@Override
 	@Transactional
+	@RolePermission(role=UserRole.ADMIN)
 	public void deleteAllUsers(String adminDomain, String adminEmail) {
 		Optional<UserEntity> op = this.userDao.findById(new UserId(adminDomain, adminEmail));
 		if (op.isPresent()) {
@@ -147,6 +150,14 @@ public class UsersServiceJpa implements UsersService {
 		} else {
 			throw new NotFoundException("User " + adminEmail + " not found in domain " + adminDomain);
 		}
+
+	}
+
+	@Override
+	public UserRole getUserRole(String domain, String email) {
+		return StreamSupport.stream(this.userDao.findAll().spliterator(), false)
+				.filter(user -> user.getDomain().equals(domain) && user.getEmail().equals(email))
+				.map(this.converter::convertToBoundary).collect(Collectors.toList()).get(0).getRole();
 
 	}
 

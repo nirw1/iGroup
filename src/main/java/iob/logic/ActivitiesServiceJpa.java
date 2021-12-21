@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import iob.annotations.RolePermission;
 import iob.boundaries.ActivityBoundary;
 import iob.converters.ActivityConverter;
 import iob.daos.ActivityDao;
@@ -18,6 +19,7 @@ import iob.daos.InstanceDao;
 import iob.daos.UserDao;
 import iob.data.ActivityEntity;
 import iob.data.IdGenerator;
+import iob.data.UserRole;
 import iob.errors.BadRequestException;
 
 @Service
@@ -31,7 +33,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Autowired
 	public ActivitiesServiceJpa(InstanceDao instanceDao, UserDao userDao, ActivityDao activityDao,
-			ActivityConverter converter,IdGeneratorDao idGenerator) {
+			ActivityConverter converter, IdGeneratorDao idGenerator) {
 		this.instanceDao = instanceDao;
 		this.userDao = userDao;
 		this.activityDao = activityDao;
@@ -76,12 +78,12 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 		ActivityEntity entityToStore = this.converter.convertToEntity(activity);
 		entityToStore.setDomain(appName);
-		
+
 		IdGenerator id = new IdGenerator();
 		id = this.idGenerator.save(id);
 		entityToStore.setId(id.getId());
 		this.idGenerator.delete(id);
-		
+
 		entityToStore.setCreatedTimestamp(new Date());
 		entityToStore = this.activityDao.save(entityToStore);
 		return this.converter.convertToBoundary(entityToStore);
@@ -96,6 +98,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Override
 	@Transactional // (readOnly = false)
+	@RolePermission(role = UserRole.ADMIN)
 	public void deleteAllActivities(String adminDomain, String adminEmail) {
 		this.activityDao.deleteAll();
 
