@@ -1,6 +1,5 @@
 package iob.logic;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
