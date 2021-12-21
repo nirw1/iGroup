@@ -49,4 +49,7 @@ public class UserId implements Serializable {
 		return Objects.equals(domain, other.domain) && Objects.equals(email, other.email);
 	}
 
-}
+	@Override
+	public String toString() {
+		return domain + "/" + email;
+	}}
