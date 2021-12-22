@@ -53,6 +53,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional
+	@RolePermission(roles = { UserRole.PLAYER })
 	public InstanceBoundary createInstance(String userDomain, String userEmail, InstanceBoundary instance) {
 
 		if (instance.getType() == null || instance.getType().isEmpty()) {
@@ -137,6 +138,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional(readOnly = true)
+	@RolePermission(roles = { UserRole.PLAYER })
 	public InstanceBoundary getSpecificInstance(String userDomain, String userEmail, String instanceDomain,
 			String instanceId) {
 		return this.converter.convertToBoundary(this.instanceDao.findById(new InstanceId(instanceDomain, instanceId))
@@ -189,16 +191,15 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	@Transactional(readOnly = true)
 	public List<InstanceBoundary> getAllChildren(String userDomain, String userEmail, String instanceDomain,
 			String instanceId, int page, int size) {
-		if (!this.instanceDao
-				.existsById(new InstanceId(instanceDomain, instanceId))) {
-				throw new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
-			}
-			
-			return this.instanceDao
-				.findAllByParentsDomainAndParentsId(instanceDomain, instanceId, PageRequest.of(page, size, Direction.DESC, "id"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+		if (!this.instanceDao.existsById(new InstanceId(instanceDomain, instanceId))) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
+		}
+
+		return this.instanceDao
+				.findAllByParentsDomainAndParentsId(instanceDomain, instanceId,
+						PageRequest.of(page, size, Direction.DESC, "id"))
+				.stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
 	@Override
@@ -212,34 +213,33 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	@Override
 	@Transactional(readOnly = true)
 	public List<InstanceBoundary> getAllParents(String userDomain, String userEmail, String instanceDomain,
-			String instanceId, int page, int size) {		
-		if (!this.instanceDao
-				.existsById(new InstanceId(instanceDomain, instanceId))) {
-				throw new NotFoundException("Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
-			}
-			
-			return this.instanceDao
-				.findAllByChildrenDomainAndChildrenId(instanceDomain, instanceId, PageRequest.of(page, size, Direction.DESC, "id"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+			String instanceId, int page, int size) {
+		if (!this.instanceDao.existsById(new InstanceId(instanceDomain, instanceId))) {
+			throw new NotFoundException(
+					"Could not find instance with id: " + instanceId + " in domain: " + instanceDomain);
+		}
+
+		return this.instanceDao
+				.findAllByChildrenDomainAndChildrenId(instanceDomain, instanceId,
+						PageRequest.of(page, size, Direction.DESC, "id"))
+				.stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	@RolePermission(roles = { UserRole.PLAYER })
 	public List<InstanceBoundary> getByName(String userDomain, String userEmail, String name, int page, int size) {
-		List<InstanceBoundary> result = this.instanceDao.findAllByName(name, PageRequest.of(page, size, Direction.DESC, "name"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+		List<InstanceBoundary> result = this.instanceDao
+				.findAllByName(name, PageRequest.of(page, size, Direction.DESC, "name")).stream()
+				.map(this.converter::convertToBoundary).collect(Collectors.toList());
 		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByType(String userDomain, String userEmail, String type, int page, int size) {
-		List<InstanceBoundary> result = this.instanceDao.findAllByType(type, PageRequest.of(page, size, Direction.DESC, "type"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+		List<InstanceBoundary> result = this.instanceDao
+				.findAllByType(type, PageRequest.of(page, size, Direction.DESC, "type")).stream()
+				.map(this.converter::convertToBoundary).collect(Collectors.toList());
 		return result;
 	}
 
@@ -248,48 +248,52 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 			String distance, int page, int size) {
 		long latLong, lngLong, distanceLong;
 		try {
-			latLong = Long.valueOf(lat); lngLong = Long.valueOf(lng); distanceLong = Long.valueOf(distance);
-		} catch(NumberFormatException e){
+			latLong = Long.valueOf(lat);
+			lngLong = Long.valueOf(lng);
+			distanceLong = Long.valueOf(distance);
+		} catch (NumberFormatException e) {
 			throw new BadRequestException("Numbers provided cannot be converted to long");
 		}
-		long maxLat = latLong + (distanceLong/2), minLat = latLong - (distanceLong/2), maxLng = lngLong + (distanceLong/2), minLng = lngLong - (distanceLong/2);
-		List<InstanceBoundary> result = this.instanceDao.findAllByLatitudeLessThanEqualAndLatitudeGreaterThanEqualAndLongitudeLessThanEqualAndLongitudeGreaterThanEqual(maxLat, minLat, maxLng, minLng, PageRequest.of(page, size, Direction.DESC, "latitude", "longitude"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
+		long maxLat = latLong + (distanceLong / 2), minLat = latLong - (distanceLong / 2),
+				maxLng = lngLong + (distanceLong / 2), minLng = lngLong - (distanceLong / 2);
+		List<InstanceBoundary> result = this.instanceDao
+				.findAllByLatitudeLessThanEqualAndLatitudeGreaterThanEqualAndLongitudeLessThanEqualAndLongitudeGreaterThanEqual(
+						maxLat, minLat, maxLng, minLng,
+						PageRequest.of(page, size, Direction.DESC, "latitude", "longitude"))
+				.stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
 		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByCreationTime(String userDomain, String userEmail, String creationWindow,
 			int page, int size) {
-		
+
 		List<InstanceBoundary> result;
 		Date minDate = new Date();
-		switch(creationWindow) {
-			case "LAST_HOUR":
-				minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(1));
-				break;
-			case "LAST_24_HOURS":
-				minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(24));
-				break;
-				
-			case "LAST_7_DAYS":
-				minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(7));
-				break;
-				
-			case "LAST_30_DAYS":
-				minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(30));
-				break;
-				
-			default:
-				throw new BadRequestException("creationWindow provided is INVALID");
+		switch (creationWindow) {
+		case "LAST_HOUR":
+			minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(1));
+			break;
+		case "LAST_24_HOURS":
+			minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(24));
+			break;
+
+		case "LAST_7_DAYS":
+			minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(7));
+			break;
+
+		case "LAST_30_DAYS":
+			minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(30));
+			break;
+
+		default:
+			throw new BadRequestException("creationWindow provided is INVALID");
 		}
-		result = this.instanceDao.findAllByCreatedTimestampGreaterThanEqual(minDate, PageRequest.of(page, size, Direction.DESC, "createdTimestamp"))
-				.stream()
-				.map(this.converter::convertToBoundary)
-				.collect(Collectors.toList());
-		
+		result = this.instanceDao
+				.findAllByCreatedTimestampGreaterThanEqual(minDate,
+						PageRequest.of(page, size, Direction.DESC, "createdTimestamp"))
+				.stream().map(this.converter::convertToBoundary).collect(Collectors.toList());
+
 		return result;
 	}
 }

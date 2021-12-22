@@ -48,6 +48,7 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 
 	@Override
 	@Transactional // (readOnly = false)
+	@RolePermission(roles = { UserRole.PLAYER })
 	public Object invokeActivity(ActivityBoundary activity) {
 		// Check that type is valid
 		if (activity.getType() == null || activity.getType().isEmpty()) {
