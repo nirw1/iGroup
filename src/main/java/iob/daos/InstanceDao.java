@@ -1,5 +1,6 @@
 package iob.daos;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,8 @@ public interface InstanceDao extends PagingAndSortingRepository<InstanceEntity, 
 			@Param("maxLongitudeInclusive") double maxLongitudeInclusive, 
 			@Param("minLongitudeInclusive") double minLongitudeInclusive,
 			Pageable pageable);
+	
+	public List<InstanceEntity> findAllByCreatedTimestampGreaterThanEqual(Date date, Pageable pageable);
 	
 	
 }

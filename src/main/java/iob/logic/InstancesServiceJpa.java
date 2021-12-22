@@ -1,5 +1,6 @@
 package iob.logic;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -228,8 +230,6 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 				.stream()
 				.map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
-		if(result.isEmpty())
-			throw new NotFoundException("Could not find instance with name: " + name + " on page: " + page);
 		return result;
 	}
 
@@ -239,54 +239,56 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 				.stream()
 				.map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
-		if(result.isEmpty())
-			throw new NotFoundException("Could not find instance with type: " + type + " on page: " + page);
 		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByLocation(String userDomain, String userEmail, String lat, String lng,
 			String distance, int page, int size) {
-		long latLong = Long.valueOf(lat);
-		long lngLong = Long.valueOf(lng);
-		long distanceLong = Long.valueOf(distance);
-		long maxLat = latLong + (distanceLong/2);
-		long minLat = latLong - (distanceLong/2);
-		long maxLng = lngLong + (distanceLong/2);
-		long minLng = lngLong - (distanceLong/2);
+		long latLong, lngLong, distanceLong;
+		try {
+			latLong = Long.valueOf(lat); lngLong = Long.valueOf(lng); distanceLong = Long.valueOf(distance);
+		} catch(NumberFormatException e){
+			throw new BadRequestException("Numbers provided cannot be converted to long");
+		}
+		long maxLat = latLong + (distanceLong/2), minLat = latLong - (distanceLong/2), maxLng = lngLong + (distanceLong/2), minLng = lngLong - (distanceLong/2);
 		List<InstanceBoundary> result = this.instanceDao.findAllByLatitudeLessThanEqualAndLatitudeGreaterThanEqualAndLongitudeLessThanEqualAndLongitudeGreaterThanEqual(maxLat, minLat, maxLng, minLng, PageRequest.of(page, size, Direction.DESC, "latitude", "longitude"))
 				.stream()
 				.map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
-		if(result.isEmpty())
-			throw new NotFoundException("Could not find instance with location: " + lat + "," + lng + " with distance: " + distance + " on page: " + page);
 		return result;
 	}
 
 	@Override
 	public List<InstanceBoundary> getByCreationTime(String userDomain, String userEmail, String creationWindow,
 			int page, int size) {
-		/*
+		
 		List<InstanceBoundary> result;
+		Date minDate = new Date();
 		switch(creationWindow) {
 			case "LAST_HOUR":
+				minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(1));
 				break;
-				
 			case "LAST_24_HOURS":
+				minDate.setTime(minDate.getTime() - TimeUnit.HOURS.toMillis(24));
 				break;
 				
 			case "LAST_7_DAYS":
+				minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(7));
 				break;
 				
 			case "LAST_30_DAYS":
-				break;	
+				minDate.setTime(minDate.getTime() - TimeUnit.DAYS.toMillis(30));
+				break;
+				
+			default:
+				throw new BadRequestException("creationWindow provided is INVALID");
 		}
+		result = this.instanceDao.findAllByCreatedTimestampGreaterThanEqual(minDate, PageRequest.of(page, size, Direction.DESC, "createdTimestamp"))
+				.stream()
+				.map(this.converter::convertToBoundary)
+				.collect(Collectors.toList());
 		
-		if(result.isEmpty())
-			throw new NotFoundException("Could not find instance with creationWindow: " + creationWindow + " on page:" + page);
 		return result;
-		*/
-		throw new RuntimeException("Not implemented operation");
-
 	}
 }
