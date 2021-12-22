@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import iob.Application;
 import iob.attributes.UserId;
 import iob.boundaries.ActivityBoundary;
+import iob.boundaries.InstanceBoundary;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.ActivityEntity;
@@ -66,69 +67,88 @@ public class AdminActivitiesTests {
 		this.testingService.getActivityDao().deleteAll();
 	}
 
+//	@Test
+//	public void testAdminDeleteAllActivities() {
+//		this.user = this.client
+//				.postForObject(this.createUserUrl,
+//						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
+//				.getUserId();
+//
+//		this.client.delete(this.url + this.user);
+//		assertThat(this.testingService.getActivityDao().findAll()).hasSize(0);
+//	}
+
 	@Test
-	public void testAdminDeleteAllActivities() {
+	public void testAdminCreateAnInstance() {
 		this.user = this.client
 				.postForObject(this.createUserUrl,
 						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
 				.getUserId();
-
-		this.client.delete(this.url + this.user);
-		assertThat(this.testingService.getActivityDao().findAll()).hasSize(0);
-	}
-
-	@Test
-	public void testManagerDeleteAllActivities() {
-		this.user = this.client.postForObject(this.createUserUrl,
-				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
-				.getUserId();
-
+		
+		InstanceBoundary instance = new InstanceBoundary();
+		instance.setInstanceId(null);
+		instance.setName("NAME");
+		instance.setType("TYPE");
+		instance.setActive(true);
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.delete(this.url + this.user);
+			this.client.postForObject("http://localhost:" + this.port + "/iob/instances/" + this.user, instance,
+					InstanceBoundary.class);
 		});
+
 	}
 
-	@Test
-	public void testPlayerDeleteAllActivities() {
-		this.user = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
-				.getUserId();
-
-		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.delete(this.url + this.user);
-		});
-	}
-
-	@Test
-	public void testAdminGetAllActivities() {
-		this.user = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
-				.getUserId();
-		assertThat(this.client.getForObject(this.url + this.user, ActivityBoundary[].class)).hasSizeGreaterThan(0);
-	}
-
-	@Test
-	public void testManagerGetAllActivities() {
-		this.user = this.client.postForObject(this.createUserUrl,
-				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
-				.getUserId();
-
-		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
-		});
-	}
-
-	@Test
-	public void testPlayerGetAllActivities() {
-		this.user = this.client
-				.postForObject(this.createUserUrl,
-						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
-				.getUserId();
-
-		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
-		});
-	}
+//	@Test
+//	public void testManagerDeleteAllActivities() {
+//		this.user = this.client.postForObject(this.createUserUrl,
+//				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
+//				.getUserId();
+//
+//		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+//			this.client.delete(this.url + this.user);
+//		});
+//	}
+//
+//	@Test
+//	public void testPlayerDeleteAllActivities() {
+//		this.user = this.client
+//				.postForObject(this.createUserUrl,
+//						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
+//				.getUserId();
+//
+//		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+//			this.client.delete(this.url + this.user);
+//		});
+//	}
+//
+//	@Test
+//	public void testAdminGetAllActivities() {
+//		this.user = this.client
+//				.postForObject(this.createUserUrl,
+//						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
+//				.getUserId();
+//		assertThat(this.client.getForObject(this.url + this.user, ActivityBoundary[].class)).hasSizeGreaterThan(0);
+//	}
+//
+//	@Test
+//	public void testManagerGetAllActivities() {
+//		this.user = this.client.postForObject(this.createUserUrl,
+//				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
+//				.getUserId();
+//
+//		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+//			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
+//		});
+//	}
+//
+//	@Test
+//	public void testPlayerGetAllActivities() {
+//		this.user = this.client
+//				.postForObject(this.createUserUrl,
+//						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
+//				.getUserId();
+//
+//		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+//			this.client.getForObject(this.url + this.user, ActivityBoundary[].class);
+//		});
+//	}
 }
