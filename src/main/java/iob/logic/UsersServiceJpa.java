@@ -139,7 +139,7 @@ public class UsersServiceJpa implements EnhancedUserService {
 					.filter(user -> user.getDomain().equals(domain) && user.getEmail().equals(email))
 					.map(this.converter::convertToBoundary).collect(Collectors.toList()).get(0).getRole();
 		} catch (IndexOutOfBoundsException e) {
-			throw new NotFoundException(email + " doesn't exist in domain" + domain);
+			throw new NotFoundException(email + " doesn't exist in domain " + domain);
 		} catch (Exception e) {
 			throw new RuntimeException("Error");
 		}

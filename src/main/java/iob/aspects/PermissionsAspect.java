@@ -29,8 +29,12 @@ public class PermissionsAspect {
 		UserRole[] accessRole = ann.roles();
 
 		Object args[] = proceedingJoinPoint.getArgs();
-		String domain = "" + args[0];
-		String email = "" + args[1];
+		String domain = "", email = "";
+		if (args.length >= 2) {
+			domain = "" + args[0];
+			email = "" + args[1];
+		}
+
 		UserRole userRole = this.userService.getUserRole(domain, email);
 		if (Arrays.asList(accessRole).contains(userRole)) {
 			try {

@@ -1,4 +1,4 @@
-package integrative;
+package adminApiTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,13 +20,13 @@ import iob.Application;
 import iob.attributes.UserId;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
-import iob.data.ActivityEntity;
+import iob.data.InstanceEntity;
 import iob.data.UserRole;
 import iob.logic.TestingDaoService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
-public class AdminActivitiesTests {
+public class AdminInstancesTests {
 
 	@Autowired
 	private TestingDaoService testingService;
@@ -45,39 +45,39 @@ public class AdminActivitiesTests {
 
 	@PostConstruct
 	public void postConstruct() {
-		this.url = "http://localhost:" + this.port + "/iob/admin/activities/";
+		this.url = "http://localhost:" + this.port + "/iob/admin/instances/";
 		this.createUserUrl = "http://localhost:" + this.port + "/iob/users/";
 		this.client = new RestTemplate();
 	}
 
 	@BeforeEach
-	public void createActivity() {
-		ActivityEntity entity = new ActivityEntity();
-		entity.setId(1);
+	public void createInstance() {
+		InstanceEntity entity = new InstanceEntity();
+		entity.setId("1");
 		entity.setDomain("DOMAIN");
-		this.testingService.getActivityDao().save(entity);
+		this.testingService.getInstanceDao().save(entity);
 	}
 
 //
 	@AfterEach
-	public void deleteAllActivitiesAndUsers() {
+	public void deleteAllInstancesAndUsers() {
 		this.testingService.getUserDao().deleteAll();
-		this.testingService.getActivityDao().deleteAll();
+		this.testingService.getInstanceDao().deleteAll();
 	}
 
 	@Test
-	public void testAdminDeleteAllActivities() {
+	public void testAdminDeleteAllInstances() {
 		this.user = this.client
 				.postForObject(this.createUserUrl,
 						new NewUserBoundary("admin@mail.com", UserRole.ADMIN, "admin", "admin"), UserBoundary.class)
 				.getUserId();
 
 		this.client.delete(this.url + this.user);
-		assertThat(this.testingService.getActivityDao().findAll()).hasSize(0);
+		assertThat(this.testingService.getInstanceDao().findAll()).hasSize(0);
 	}
 
 	@Test
-	public void testManagerDeleteAllActivities() {
+	public void testManagerDeleteAllInstances() {
 		this.user = this.client.postForObject(this.createUserUrl,
 				new NewUserBoundary("manager@mail.com", UserRole.MANAGER, "manager", "manager"), UserBoundary.class)
 				.getUserId();
@@ -88,7 +88,7 @@ public class AdminActivitiesTests {
 	}
 
 	@Test
-	public void testPlayerDeleteAllActivities() {
+	public void testPlayerDeleteAllInstances() {
 		this.user = this.client
 				.postForObject(this.createUserUrl,
 						new NewUserBoundary("player@mail.com", UserRole.PLAYER, "player", "player"), UserBoundary.class)
