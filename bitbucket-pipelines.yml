@@ -13,7 +13,6 @@ pipelines:
             - maven
           script:
             - mvn -B verify --file pom.xml
-            - mvn test
           after-script:
            # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
             - pipe: atlassian/checkstyle-report:0.3.0
