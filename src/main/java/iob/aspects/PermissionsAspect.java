@@ -73,8 +73,8 @@ public class PermissionsAspect {
 					}
 				} else {
 					if (retVal instanceof InstanceBoundary) {
-						if (!((InstanceBoundary) retVal).getActive()) {
-							throw new NotFoundException("Instance doesn't exist or inactive");
+						if (userRole == UserRole.PLAYER && !((InstanceBoundary) retVal).getActive()) {
+							retVal = null;
 						}
 					}
 				}
