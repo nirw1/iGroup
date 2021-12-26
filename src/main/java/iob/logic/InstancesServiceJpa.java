@@ -53,7 +53,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional
-	@RolePermission(roles = { UserRole.PLAYER })
+	@RolePermission(roles = { UserRole.MANAGER })
 	public InstanceBoundary createInstance(String userDomain, String userEmail, InstanceBoundary instance) {
 
 		if (instance.getType() == null || instance.getType().isEmpty()) {
@@ -81,6 +81,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional
+	@RolePermission(roles = { UserRole.MANAGER })
 	public InstanceBoundary updateInstance(String userDomain, String userEmail, String instanceDomain,
 			String instanceId, InstanceBoundary update) {
 		Optional<InstanceEntity> op = this.instanceDao.findById(new InstanceId(instanceDomain, instanceId));
@@ -130,6 +131,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional(readOnly = true)
+	@RolePermission(roles = { UserRole.MANAGER,UserRole.PLAYER })
 	public List<InstanceBoundary> getAllInstances(String userDomain, String userEmail, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "id");
 		return StreamSupport.stream(this.instanceDao.findAll(pageable).spliterator(), false)
@@ -138,7 +140,7 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 	@Override
 	@Transactional(readOnly = true)
-	@RolePermission(roles = { UserRole.PLAYER })
+	@RolePermission(roles = { UserRole.PLAYER, UserRole.MANAGER })
 	public InstanceBoundary getSpecificInstance(String userDomain, String userEmail, String instanceDomain,
 			String instanceId) {
 		return this.converter.convertToBoundary(this.instanceDao.findById(new InstanceId(instanceDomain, instanceId))
