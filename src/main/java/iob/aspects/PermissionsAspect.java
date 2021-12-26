@@ -73,7 +73,9 @@ public class PermissionsAspect {
 					}
 				} else {
 					if (retVal instanceof InstanceBoundary) {
-						throw new NotFoundException("Instance doesn't exist or inactive");
+						if (!((InstanceBoundary) retVal).getActive()) {
+							throw new NotFoundException("Instance doesn't exist or inactive");
+						}
 					}
 				}
 				return retVal;
