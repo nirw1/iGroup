@@ -87,6 +87,6 @@ public class GetAllInstancesTest {
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThat(this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class)).hasSize(1)
-				.allMatch(instance -> instance.getActive());
+				.allMatch(instance -> instance.getActive() == true);
 	}
 }
