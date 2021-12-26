@@ -98,5 +98,10 @@ public class InstanceBoundary {
 	public void setInstanceAttributes(Map<String, Object> instanceAttributes) {
 		this.instanceAttributes = instanceAttributes;
 	}
+	
+	@Override
+	public String toString() {
+		return this.instanceId.toString();
+	}
 
 }
