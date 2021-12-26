@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import iob.attributes.UserId;
 import iob.boundaries.NewUserBoundary;
 import iob.boundaries.UserBoundary;
-import iob.logic.UsersService;
+import iob.logic.EnhancedUserService;
 
 @RestController
 public class UserRelatedController {
-	private UsersService usersService;
+	private EnhancedUserService usersService;
 
 	@Autowired
-	public UserRelatedController(UsersService usersService) {
+	public UserRelatedController(EnhancedUserService usersService) {
 		super();
 		this.usersService = usersService;
 	}

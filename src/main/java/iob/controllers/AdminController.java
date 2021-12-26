@@ -5,24 +5,25 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.ActivityBoundary;
 import iob.boundaries.UserBoundary;
-import iob.logic.ActivitiesService;
+import iob.logic.EnhancedActivitiesService;
+import iob.logic.EnhancedUserService;
 import iob.logic.InstancesService;
-import iob.logic.UsersService;
 
 @RestController
 public class AdminController {
 
-	private UsersService usersService;
+	private EnhancedUserService usersService;
 	private InstancesService instancesService;
-	private ActivitiesService activitiesService;
+	private EnhancedActivitiesService activitiesService;
 
 	@Autowired
-	public AdminController(UsersService usersService, InstancesService instancesService,
-			ActivitiesService activitiesService) {
+	public AdminController(EnhancedUserService usersService, InstancesService instancesService,
+			EnhancedActivitiesService activitiesService) {
 		super();
 		this.usersService = usersService;
 		this.instancesService = instancesService;
@@ -54,8 +55,10 @@ public class AdminController {
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	public UserBoundary[] getUsers(@PathVariable("userDomain") String userDomain,
-			@PathVariable("userEmail") String userEmail) {
-		return this.usersService.getAllUsers(userDomain, userEmail).toArray(new UserBoundary[0]);
+			@PathVariable("userEmail") String userEmail,
+			@RequestParam(name="page", required = false, defaultValue = "0") int page,
+			@RequestParam(name="size", required = false, defaultValue = "10") int size) {
+		return this.usersService.getAllUsers(userDomain, userEmail, page, size).toArray(new UserBoundary[0]);
 	}
 
 	@RequestMapping(
@@ -64,8 +67,10 @@ public class AdminController {
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	public ActivityBoundary[] getActivities(@PathVariable("userDomain") String userDomain,
-			@PathVariable("userEmail") String userEmail) {
-		return this.activitiesService.getAllActivities(userDomain, userEmail).toArray(new ActivityBoundary[0]);
+			@PathVariable("userEmail") String userEmail,
+			@RequestParam(name="page", required = false, defaultValue = "0") int page,
+			@RequestParam(name="size", required = false, defaultValue = "10") int size) {
+		return this.activitiesService.getAllActivities(userDomain, userEmail, page, size).toArray(new ActivityBoundary[0]);
 	}
 
 }

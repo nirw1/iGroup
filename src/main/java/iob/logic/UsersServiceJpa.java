@@ -9,6 +9,9 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,10 +121,20 @@ public class UsersServiceJpa implements EnhancedUserService {
 	@Override
 	@Transactional(readOnly = true)
 	@RolePermission(roles = { UserRole.ADMIN })
+	@Deprecated
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
 		return StreamSupport.stream(this.userDao.findAll().spliterator(), false).map(this.converter::convertToBoundary)
 				.collect(Collectors.toList());
 
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	@RolePermission(roles = { UserRole.ADMIN })
+	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "id");
+		return StreamSupport.stream(this.userDao.findAll(pageable).spliterator(), false)
+				.map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
 	@Override
