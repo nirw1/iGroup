@@ -60,6 +60,30 @@ public class TestingFactory {
 		return this.client.postForObject(this.createInstanceUrl + createdBy, tmp, InstanceBoundary.class);
 	}
 
+	public InstanceBoundary createNewInstance(UserId createdBy, boolean isActive, Location location) {
+		InstanceBoundary tmp = new InstanceBoundary();
+		tmp.setActive(isActive);
+		tmp.setCreatedBy(new CreatedBy(createdBy));
+		tmp.setCreatedTimestamp(new Date());
+		tmp.setLocation(location);
+		tmp.setName("" + this.id.get());
+		tmp.setType("" + this.id.get());
+		this.id.incrementAndGet();
+		return this.client.postForObject(this.createInstanceUrl + createdBy, tmp, InstanceBoundary.class);
+	}
+
+	public InstanceBoundary createNewInstance(UserId createdBy, boolean isActive, String name, String type) {
+		InstanceBoundary tmp = new InstanceBoundary();
+		tmp.setActive(isActive);
+		tmp.setCreatedBy(new CreatedBy(createdBy));
+		tmp.setCreatedTimestamp(new Date());
+		tmp.setLocation(new Location(this.id.get(), this.id.get()));
+		tmp.setName(name);
+		tmp.setType(type);
+		this.id.incrementAndGet();
+		return this.client.postForObject(this.createInstanceUrl + createdBy, tmp, InstanceBoundary.class);
+	}
+
 	public ActivityBoundary createNewActivity(InstanceId instanceId, UserId invokedBy) {
 		ActivityBoundary tmp = new ActivityBoundary();
 		tmp.setActivityId(null);
