@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
-import iob.attributes.UserId;
 import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
 import iob.logic.TestingDaoService;
