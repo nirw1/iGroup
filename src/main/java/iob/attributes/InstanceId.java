@@ -51,6 +51,6 @@ public class InstanceId implements Serializable {
 
 	@Override
 	public String toString() {
-		return this.domain + "/" + this.id;
+		return this.domain + "/" + this.id+"/";
 	}
 }
