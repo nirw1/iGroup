@@ -7,6 +7,9 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +26,7 @@ import iob.data.UserRole;
 import iob.errors.BadRequestException;
 
 @Service
-public class ActivitiesServiceJpa implements ActivitiesService {
+public class ActivitiesServiceJpa implements EnhancedActivitiesService {
 	private IdGeneratorDao idGenerator;
 	private InstanceDao instanceDao;
 	private UserDao userDao;
@@ -93,8 +96,18 @@ public class ActivitiesServiceJpa implements ActivitiesService {
 	@Override
 	@Transactional(readOnly = true)
 	@RolePermission(roles = UserRole.ADMIN)
+	@Deprecated
 	public List<ActivityBoundary> getAllActivities(String adminDomain, String adminEmail) {
 		return StreamSupport.stream(this.activityDao.findAll().spliterator(), false)
+				.map(this.converter::convertToBoundary).collect(Collectors.toList());
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	@RolePermission(roles = UserRole.ADMIN)
+	public List<ActivityBoundary> getAllActivities(String userDomain, String userEmail, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "id");
+		return StreamSupport.stream(this.activityDao.findAll(pageable).spliterator(), false)
 				.map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
 
