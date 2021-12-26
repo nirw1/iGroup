@@ -30,7 +30,7 @@ public class UpdateUserTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
-	private UserId user;
+	private UserBoundary user;
 
 	private RestTemplate client;
 	private String url;
@@ -56,7 +56,7 @@ public class UpdateUserTest {
 	@Test
 	public void testUpdateUser() {
 
-		this.user = this.testingFactory.createNewUser(UserRole.ADMIN).getUserId();
+		this.user = this.testingFactory.createNewUser(UserRole.ADMIN);
 		UserBoundary userNew = this.testingFactory.createNewUser(UserRole.MANAGER);
 		UserBoundary userOld = this.client.getForObject(this.url + "login/" + this.user, UserBoundary.class);
 
