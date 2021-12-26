@@ -60,8 +60,7 @@ public class PermissionsAspect {
 					List<?> list = convertObjectToList(retVal);
 					try {
 						if (userRole == UserRole.PLAYER && list.get(0) instanceof InstanceBoundary) {
-
-							retVal = list.stream().filter(instance -> ((InstanceBoundary) instance).getActive())
+							retVal = list.stream().filter(instance -> ((InstanceBoundary) instance).getActive() == true)
 									.collect(Collectors.toList());
 						} else {
 
@@ -74,7 +73,7 @@ public class PermissionsAspect {
 				} else {
 					if (retVal instanceof InstanceBoundary) {
 						if (userRole == UserRole.PLAYER && !((InstanceBoundary) retVal).getActive()) {
-							retVal = null;
+							new NotFoundException("Instance is inactive, user can't access it");
 						}
 					}
 				}
