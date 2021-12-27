@@ -26,7 +26,7 @@ import iob.logic.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
-public class GetInstanceParentTest {
+public class GetAllParentsTest {
 
 	@Autowired
 	private TestingDaoService testingService;
