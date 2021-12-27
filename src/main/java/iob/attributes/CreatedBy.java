@@ -1,5 +1,7 @@
 package iob.attributes;
 
+import java.util.Objects;
+
 public class CreatedBy {
 	private UserId userId = null;
 
@@ -41,4 +43,22 @@ public class CreatedBy {
 
 		return this.userId.getEmail() + "@@" + this.userId.getDomain();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(userId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CreatedBy other = (CreatedBy) obj;
+		return Objects.equals(userId, other.userId);
+	}
+
 }

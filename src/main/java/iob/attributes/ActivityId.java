@@ -49,4 +49,9 @@ public class ActivityId implements Serializable {
 		return Objects.equals(domain, other.domain) && id == other.id;
 	}
 
+	@Override
+	public String toString() {
+		return this.domain + "/" + this.id + "/";
+	}
+
 }

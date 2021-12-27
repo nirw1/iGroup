@@ -1,4 +1,4 @@
-package iob.logic;
+package iob.tests_helpers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

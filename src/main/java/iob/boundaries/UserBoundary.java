@@ -63,8 +63,7 @@ public class UserBoundary {
 
 	@Override
 	public String toString() {
-		return "UserBoundary [userId=" + userId + ", role=" + role + ", username=" + username + ", avatar=" + avatar
-				+ "]";
+		return this.userId.toString();
 	}
 
 }

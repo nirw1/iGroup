@@ -51,5 +51,6 @@ public class UserId implements Serializable {
 
 	@Override
 	public String toString() {
-		return domain + "/" + email;
-	}}
+		return domain + "/" + email + "/";
+	}
+}

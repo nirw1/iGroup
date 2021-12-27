@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import iob.boundaries.ActivityBoundary;
-import iob.logic.ActivitiesService;
 import iob.logic.EnhancedActivitiesService;
 
 @RestController
@@ -21,12 +20,7 @@ public class ActivitiesController {
 		this.activitiesService = activitiesService;
 	}
 
-	@RequestMapping(
-			path = "/iob/activities",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE
-	)
+	@RequestMapping(path = "/iob/activities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Object createActivity(@RequestBody ActivityBoundary activityFromClient) {
 		return this.activitiesService.invokeActivity(activityFromClient);
 	}

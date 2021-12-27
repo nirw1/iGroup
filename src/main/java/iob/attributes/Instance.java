@@ -1,5 +1,7 @@
 package iob.attributes;
 
+import java.util.Objects;
+
 public class Instance {
 	private InstanceId instanceId = null;
 
@@ -32,6 +34,23 @@ public class Instance {
 			return this.instanceId.getId();
 		}
 		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(instanceId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Instance other = (Instance) obj;
+		return Objects.equals(instanceId, other.instanceId);
 	}
 
 }
