@@ -254,15 +254,15 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 	@RolePermission(roles = { UserRole.MANAGER, UserRole.PLAYER })
 	public List<InstanceBoundary> getByLocation(String userDomain, String userEmail, String lat, String lng,
 			String distance, int page, int size) {
-		long latLong, lngLong, distanceLong;
+		double latLong, lngLong, distanceLong;
 		try {
-			latLong = Long.valueOf(lat);
-			lngLong = Long.valueOf(lng);
-			distanceLong = Long.valueOf(distance);
+			latLong = Double.valueOf(lat);
+			lngLong = Double.valueOf(lng);
+			distanceLong = Double.valueOf(distance);
 		} catch (NumberFormatException e) {
 			throw new BadRequestException("Numbers provided cannot be converted to long");
 		}
-		long maxLat = latLong + (distanceLong / 2), minLat = latLong - (distanceLong / 2),
+		double maxLat = latLong + (distanceLong / 2), minLat = latLong - (distanceLong / 2),
 				maxLng = lngLong + (distanceLong / 2), minLng = lngLong - (distanceLong / 2);
 		List<InstanceBoundary> result = this.instanceDao
 				.findAllByLatitudeLessThanEqualAndLatitudeGreaterThanEqualAndLongitudeLessThanEqualAndLongitudeGreaterThanEqual(
