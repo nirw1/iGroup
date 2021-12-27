@@ -84,7 +84,7 @@ public class TestingFactory {
 		return this.client.postForObject(this.createInstanceUrl + createdBy, tmp, InstanceBoundary.class);
 	}
 
-	public ActivityBoundary createNewActivity(InstanceId instanceId, UserId invokedBy) {
+	public Object createNewActivity(InstanceId instanceId, UserId invokedBy) {
 		ActivityBoundary tmp = new ActivityBoundary();
 		tmp.setActivityId(null);
 		tmp.setCreatedTimestamp(new Date());
@@ -92,7 +92,7 @@ public class TestingFactory {
 		tmp.setInvokedBy(new CreatedBy(invokedBy));
 		tmp.setType("" + this.id.get());
 		this.id.incrementAndGet();
-		return this.client.postForObject(this.createActivityUrl, tmp, ActivityBoundary.class);
+		return this.client.postForObject(this.createActivityUrl, tmp, Object.class);
 	}
 
 	public RestTemplate getClient() {
