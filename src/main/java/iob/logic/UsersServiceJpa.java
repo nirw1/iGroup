@@ -120,7 +120,6 @@ public class UsersServiceJpa implements EnhancedUserService {
 
 	@Override
 	@Transactional(readOnly = true)
-	@RolePermission(roles = { UserRole.ADMIN })
 	@Deprecated
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail) {
 		return StreamSupport.stream(this.userDao.findAll().spliterator(), false).map(this.converter::convertToBoundary)
@@ -132,7 +131,7 @@ public class UsersServiceJpa implements EnhancedUserService {
 	@Transactional(readOnly = true)
 	@RolePermission(roles = { UserRole.ADMIN })
 	public List<UserBoundary> getAllUsers(String adminDomain, String adminEmail, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "id");
+		Pageable pageable = PageRequest.of(page, size, Direction.DESC, "email");
 		return StreamSupport.stream(this.userDao.findAll(pageable).spliterator(), false)
 				.map(this.converter::convertToBoundary).collect(Collectors.toList());
 	}
