@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,10 @@ public class SearchInstancesByNameTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private String name;
+	private String type;
+	private UserBoundary user;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -49,6 +54,16 @@ public class SearchInstancesByNameTest {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.name = "NAME";
+		this.type = "TYPE";
+
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.testingFactory.createNewInstance(this.user.getUserId(), true, this.name, this.type);
+		this.testingFactory.createNewInstance(this.user.getUserId(), false, this.name, this.type);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -57,64 +72,38 @@ public class SearchInstancesByNameTest {
 
 	@Test
 	public void testAdminSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
+					InstanceBoundary[].class);
 		});
 	}
 
 	@Test
 	public void testManagerSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 				InstanceBoundary[].class)).hasSize(2);
 	}
 
 	@Test
 	public void testPlayerSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 				InstanceBoundary[].class)).hasSize(1);
 	}
 
 	@Test
 	public void testNonExistingUserSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
+					InstanceBoundary[].class);
 		});
 	}
 

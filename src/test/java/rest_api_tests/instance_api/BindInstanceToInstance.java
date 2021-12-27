@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +38,11 @@ public class BindInstanceToInstance {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+	private InstanceBoundary parentInstance;
+	private InstanceBoundary childInstance;
+	private InstanceIdBoundary childIdBoundary;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -53,6 +59,15 @@ public class BindInstanceToInstance {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.parentInstance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+		this.childInstance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+		this.childIdBoundary = new InstanceIdBoundary(this.childInstance.getInstanceId().getDomain(),
+				this.childInstance.getInstanceId().getId());
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -61,59 +76,41 @@ public class BindInstanceToInstance {
 
 	@Test
 	public void testAdminBindingInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary parentInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary childInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.put(this.url + requestingUser + parentInstance + "/children", childInstance);
+			this.client.put(this.url + requestingUser + this.parentInstance + "/children", this.childIdBoundary);
 		});
 	}
 
 	@Test
 	public void testManagerBindingInstances() {
-
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary parentInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary childInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceIdBoundary childIdBoundary = new InstanceIdBoundary(childInstance.getInstanceId().getDomain(),
-				childInstance.getInstanceId().getId());
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		this.client.put(this.url + requestingUser + parentInstance + "/children", childIdBoundary);
+		this.client.put(this.url + requestingUser + this.parentInstance + "/children", this.childIdBoundary);
 
 		Pageable pageable = PageRequest.of(0, 5, Direction.DESC, "id");
 		assertThat(this.testingService.getInstanceDao().findAllByParentsDomainAndParentsId(
-				parentInstance.getInstanceId().getDomain(), parentInstance.getInstanceId().getId(), pageable))
+				this.parentInstance.getInstanceId().getDomain(), this.parentInstance.getInstanceId().getId(), pageable))
 						.hasSize(1);
 	}
 
 	@Test
 	public void testPlayerBindingInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary parentInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary childInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.put(this.url + requestingUser + parentInstance + "/children", childInstance);
+			this.client.put(this.url + requestingUser + this.parentInstance + "/children", this.childIdBoundary);
 		});
 	}
 
 	@Test
 	public void testNonExistingUserBindingInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary parentInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary childInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.put(this.url + requestingUser + parentInstance + "/children", childInstance);
+			this.client.put(this.url + requestingUser + this.parentInstance + "/children", this.childIdBoundary);
 		});
 	}
 

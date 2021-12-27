@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +35,12 @@ public class SearchInstancesByLocationTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+	private InstanceBoundary activeInstance;
+	private InstanceBoundary inActiveInstance;
+	private Location activeLocation;
+	private Location inActiveLocation;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -50,6 +57,16 @@ public class SearchInstancesByLocationTest {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.activeInstance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+		this.inActiveInstance = this.testingFactory.createNewInstance(this.user.getUserId(), false);
+
+		this.activeLocation = this.activeInstance.getLocation();
+		this.inActiveLocation = this.inActiveInstance.getLocation();
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -58,74 +75,48 @@ public class SearchInstancesByLocationTest {
 
 	@Test
 	public void testAdminSearchByLocation() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary activeInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary inActiveInstance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
-		Location activeLocation = activeInstance.getLocation();
-		Location inActiveLocation = inActiveInstance.getLocation();
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/near/" + activeLocation + "50",
+			this.client.getForObject(this.url + requestingUser + "/search/near/" + this.activeLocation + "50",
 					InstanceBoundary[].class);
 		});
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/near/" + inActiveLocation + "50",
+			this.client.getForObject(this.url + requestingUser + "/search/near/" + this.inActiveLocation + "50",
 					InstanceBoundary[].class);
 		});
 	}
 
 	@Test
 	public void testManagerSearchByLocation() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary activeInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
-
-		Location activeLocation = activeInstance.getLocation();
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + activeLocation + "50",
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + this.activeLocation + "50",
 				InstanceBoundary[].class)).hasSize(2);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + activeLocation + "0",
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + this.activeLocation + "0",
 				InstanceBoundary[].class)).hasSize(1);
 	}
 
 	@Test
 	public void testPlayerSearchByLocation() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary activeInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary inActiveInstance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
-		Location activeLocation = activeInstance.getLocation();
-		Location inActiveLocation = inActiveInstance.getLocation();
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + activeLocation + "50",
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + this.activeLocation + "50",
 				InstanceBoundary[].class)).hasSize(1);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + inActiveLocation + "0",
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/near/" + this.inActiveLocation + "0",
 				InstanceBoundary[].class)).hasSize(0);
 	}
 
 	@Test
 	public void testNonExistingUserSearchByLocation() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary activeInstance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
-
-		Location activeLocation = activeInstance.getLocation();
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/near/" + activeLocation + "50",
+			this.client.getForObject(this.url + requestingUser + "/search/near/" + this.activeLocation + "50",
 					InstanceBoundary[].class);
 		});
 

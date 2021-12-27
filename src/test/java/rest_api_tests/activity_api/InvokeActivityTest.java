@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +38,9 @@ public class InvokeActivityTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+	private InstanceBoundary instance;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -53,6 +57,12 @@ public class InvokeActivityTest {
 		this.url = "http://localhost:" + this.port + "/iob/activities/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.instance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -62,14 +72,11 @@ public class InvokeActivityTest {
 
 	@Test
 	public void testAdminInvokeActivity() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		ActivityBoundary activity = new ActivityBoundary();
 		activity.setActivityId(null);
-		activity.setInstance(new Instance(instance.getInstanceId()));
+		activity.setInstance(new Instance(this.instance.getInstanceId()));
 		activity.setInvokedBy(new CreatedBy(requestingUser.getUserId()));
 		activity.setType("Activity");
 
@@ -80,14 +87,11 @@ public class InvokeActivityTest {
 
 	@Test
 	public void testManagerInvokeActivity() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
 		ActivityBoundary activity = new ActivityBoundary();
 		activity.setActivityId(null);
-		activity.setInstance(new Instance(instance.getInstanceId()));
+		activity.setInstance(new Instance(this.instance.getInstanceId()));
 		activity.setInvokedBy(new CreatedBy(requestingUser.getUserId()));
 		activity.setType("Activity");
 
@@ -98,14 +102,11 @@ public class InvokeActivityTest {
 
 	@Test
 	public void testPlayerInvokeActivity() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		ActivityBoundary activity = new ActivityBoundary();
 		activity.setActivityId(null);
-		activity.setInstance(new Instance(instance.getInstanceId()));
+		activity.setInstance(new Instance(this.instance.getInstanceId()));
 		activity.setInvokedBy(new CreatedBy(requestingUser.getUserId()));
 		activity.setType("Activity");
 
@@ -117,14 +118,11 @@ public class InvokeActivityTest {
 
 	@Test
 	public void testNonExistingUserInvokeActivity() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 		ActivityBoundary activity = new ActivityBoundary();
 		activity.setActivityId(null);
-		activity.setInstance(new Instance(instance.getInstanceId()));
+		activity.setInstance(new Instance(this.instance.getInstanceId()));
 		activity.setInvokedBy(new CreatedBy(requestingUser.getUserId()));
 		activity.setType("Activity");
 

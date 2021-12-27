@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +35,10 @@ public class DeleteAllActivitiesTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary manager;
+	private UserBoundary player;
+	private InstanceBoundary instance;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -50,6 +55,14 @@ public class DeleteAllActivitiesTest {
 		this.url = "http://localhost:" + this.port + "/iob/admin/activities/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.manager = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.player = this.testingFactory.createNewUser(UserRole.PLAYER);
+		this.instance = this.testingFactory.createNewInstance(this.manager.getUserId(), true);
+		this.testingFactory.createNewActivity(this.instance.getInstanceId(), this.player.getUserId());
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -59,11 +72,6 @@ public class DeleteAllActivitiesTest {
 
 	@Test
 	public void testAdminDeleteAllActivities() {
-		UserBoundary manager = this.testingFactory.createNewUser(UserRole.MANAGER);
-		UserBoundary player = this.testingFactory.createNewUser(UserRole.PLAYER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(manager.getUserId(), true);
-		this.testingFactory.createNewActivity(instance.getInstanceId(), player.getUserId());
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertDoesNotThrow(() -> {
@@ -74,11 +82,6 @@ public class DeleteAllActivitiesTest {
 
 	@Test
 	public void testManagerDeleteAllActivities() {
-		UserBoundary manager = this.testingFactory.createNewUser(UserRole.MANAGER);
-		UserBoundary player = this.testingFactory.createNewUser(UserRole.PLAYER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(manager.getUserId(), true);
-		this.testingFactory.createNewActivity(instance.getInstanceId(), player.getUserId());
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -89,11 +92,6 @@ public class DeleteAllActivitiesTest {
 
 	@Test
 	public void testPlayerDeleteAllActivities() {
-		UserBoundary manager = this.testingFactory.createNewUser(UserRole.MANAGER);
-		UserBoundary player = this.testingFactory.createNewUser(UserRole.PLAYER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(manager.getUserId(), true);
-		this.testingFactory.createNewActivity(instance.getInstanceId(), player.getUserId());
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -104,11 +102,6 @@ public class DeleteAllActivitiesTest {
 
 	@Test
 	public void testNonExistingUserDeleteAllActivities() {
-		UserBoundary manager = this.testingFactory.createNewUser(UserRole.MANAGER);
-		UserBoundary player = this.testingFactory.createNewUser(UserRole.PLAYER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(manager.getUserId(), true);
-		this.testingFactory.createNewActivity(instance.getInstanceId(), player.getUserId());
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
