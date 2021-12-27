@@ -73,6 +73,7 @@ public class PermissionsAspect {
 				} else {
 					if (retVal instanceof InstanceBoundary) {
 						if (userRole == UserRole.PLAYER && !((InstanceBoundary) retVal).getActive()) {
+							retVal = null;
 							new NotFoundException("Instance is inactive, user can't access it");
 						}
 					}
