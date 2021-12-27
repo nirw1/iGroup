@@ -49,4 +49,9 @@ public class Location {
 				&& Double.doubleToLongBits(lng) == Double.doubleToLongBits(other.lng);
 	}
 
+	@Override
+	public String toString() {
+		return this.lat + "/" + this.lng + "/";
+	}
+
 }
