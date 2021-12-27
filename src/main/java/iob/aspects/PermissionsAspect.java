@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import iob.annotations.RolePermission;
+import iob.boundaries.ActivityBoundary;
 import iob.boundaries.InstanceBoundary;
 import iob.data.UserRole;
 import iob.errors.NotFoundException;
@@ -48,6 +49,11 @@ public class PermissionsAspect {
 		if (args.length >= 2) {
 			domain = "" + args[0];
 			email = "" + args[1];
+		} else {
+			if (args[0] != null && args[0] instanceof ActivityBoundary) {
+				domain = ((ActivityBoundary) args[0]).getInvokedBy().getUserId().getDomain();
+				email = ((ActivityBoundary) args[0]).getInvokedBy().getUserId().getEmail();
+			}
 		}
 
 		UserRole userRole = this.userService.getUserRole(domain, email);
