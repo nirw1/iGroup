@@ -1,4 +1,4 @@
-package iob.logic;
+package iob.tests_helpers;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
