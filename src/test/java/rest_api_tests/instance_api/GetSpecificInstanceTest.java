@@ -19,8 +19,8 @@ import iob.Application;
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
-import iob.logic.TestingDaoService;
-import iob.logic.TestingFactory;
+import iob.tests_helpers.TestingDaoService;
+import iob.tests_helpers.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
