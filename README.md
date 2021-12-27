@@ -1,45 +1,55 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# iGroup Project
+A Web project as part of the Integrative Software Development Course at Afeka College.
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+- This project was developed using the Spring Boot framework and VueJS.
+- Make sure to use the POM.XML file that includes all project dependencies.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+## How to run the project
 
----
+1. Download and install Spring Tool Suite from https://spring.io/tools
+2. Use the import utility in Spring Tool Suite in order to clone the repository to your local PC.
+3. After the import is completed, right click on the project and select **Configure** and then **Convert to Maven Project**
+4. Wait until Maven will download all the project's dependencies.
+5. Run the project and make sure no errors exist.
 
-## Edit a file
+## Projects Notes
+- The project is using a Postgres database for persistance
+- A Postman collection exists for manual integration testing
+- The project includes more than 70 JUnit tests for full coverage of automatic integration testing
+- VueJS is the project's frontend
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+## Pipeline
+A pipeline has been developed for our CI/CD lifecycle. 
+The pipeline is trigger on each Commit Push or Pull Request Merge.
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+The pipeline includes the following:
+- Build automation 
+- Maven verfication on the POM.XML file
+- JUnit testing 
+- A security scan for sensitive data
 
----
+For each pipeline we get a report of the tests that failed, if any.
 
-## Create a file
 
-Next, you’ll add a new file to this repository.
+## Postgres Database
+A Postgres database has been deploy has a **Docker Container** on Digital Ocean cloud platform, together with the pgAdmin tool for DB management.
+The docker compose YML is included in the project and is named `postgres-stack.yml`.
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+- Server IP: afeka-projects.ddns.net
+- Postgres Username: root
+- Postgress Password: Afeka2021
+- Postgres DB name: igroup
+- Postgres Port: 5432
+- pgAdmin Username: admin@admin.com
+- pgAdmin Password: Afeka2021
+- pgAdmin Port: 8080
+- pdAdmin URL: http://afeka-projects.ddns.net:8080/
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+### pgAdmin Access
+Sign into the pgAdmin with `http://afeka-projects.ddns.net:8080/` and the next credentials:
 
----
+- **Username:** root
+- **Password:** Afeka2021
 
-## Clone a repository
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
-
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
