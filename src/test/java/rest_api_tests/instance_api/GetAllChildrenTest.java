@@ -1,4 +1,4 @@
-package rest_api_tests_instances;
+package rest_api_tests.instance_api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

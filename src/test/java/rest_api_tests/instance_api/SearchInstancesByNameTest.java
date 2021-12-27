@@ -1,4 +1,4 @@
-package rest_api_tests_instances;
+package rest_api_tests.instance_api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,7 +25,7 @@ import iob.logic.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
-public class SearchInstancesByDateCreatedTest {
+public class SearchInstancesByNameTest {
 
 	@Autowired
 	private TestingDaoService testingService;
@@ -56,55 +56,65 @@ public class SearchInstancesByDateCreatedTest {
 	}
 
 	@Test
-	public void testAdminSearchByDateCreated() {
+	public void testAdminSearchByType() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/created/" + "LAST_HOUR",
-					InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
 		});
 	}
 
 	@Test
-	public void testManagerSearchByDateCreated() {
+	public void testManagerSearchByType() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/created/" + "LAST_HOUR",
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
 				InstanceBoundary[].class)).hasSize(2);
 	}
 
 	@Test
-	public void testPlayerSearchByDateCreated() {
+	public void testPlayerSearchByType() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/created/" + "LAST_HOUR",
-				InstanceBoundary[].class)).hasSize(1).allMatch(instance -> instance.getActive() == true);
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
+				InstanceBoundary[].class)).hasSize(1);
 	}
 
 	@Test
-	public void testNonExistingUserSearchByDateCreated() {
+	public void testNonExistingUserSearchByType() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/created/" + "LAST_HOUR",
-					InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
 		});
 	}
 

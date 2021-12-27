@@ -1,4 +1,4 @@
-package rest_api_tests_instances;
+package rest_api_tests.instance_api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,7 +16,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
-import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
@@ -25,7 +24,7 @@ import iob.logic.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
-public class SearchInstancesByNameTest {
+public class GetSpecificInstanceTest {
 
 	@Autowired
 	private TestingDaoService testingService;
@@ -56,66 +55,66 @@ public class SearchInstancesByNameTest {
 	}
 
 	@Test
-	public void testAdminSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
+	public void testAdminGetActiveInstance() {
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class);
 		});
 	}
 
 	@Test
-	public void testManagerSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
+	public void testAdminGetInActiveInstance() {
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
+
+		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
+
+		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
+			this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class);
+		});
+	}
+
+	@Test
+	public void testManagerGetActiveInstance() {
+		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
-				InstanceBoundary[].class)).hasSize(2);
+		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
 	}
 
 	@Test
-	public void testPlayerSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
+	public void testManagerGetInActiveInstance() {
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
+
+		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
+
+		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
+	}
+
+	@Test
+	public void testPlayerGetActiveInstance() {
+		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + type,
-				InstanceBoundary[].class)).hasSize(1);
+		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
 	}
 
 	@Test
-	public void testNonExistingUserSearchByType() {
-		String name = "NAME";
-		String type = "TYPE";
-
+	public void testPlayerGetInActiveInstance() {
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
-		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
+		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
 
-		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
-				"AVATAR", "USERNAME");
+		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byType/" + type, InstanceBoundary[].class);
-		});
+		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNull();
 	}
-
 }

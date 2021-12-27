@@ -1,4 +1,4 @@
-package rest_api_tests_instances;
+package rest_api_tests.instance_api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
+import iob.attributes.UserId;
 import iob.boundaries.InstanceBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
@@ -24,7 +25,7 @@ import iob.logic.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 @Profile("Testing")
-public class GetAllInstancesTest {
+public class SearchInstancesByTypeTest {
 
 	@Autowired
 	private TestingDaoService testingService;
@@ -55,38 +56,66 @@ public class GetAllInstancesTest {
 	}
 
 	@Test
-	public void testAdminGetAllInstances() {
+	public void testAdminSearchByName() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class);
+			this.client.getForObject(this.url + requestingUser + "/search/byName/" + name, InstanceBoundary[].class);
 		});
 	}
 
 	@Test
-	public void testManagerGetAllInstances() {
+	public void testManagerSearchByName() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class)).hasSize(2);
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byName/" + name,
+				InstanceBoundary[].class)).hasSize(2);
 	}
 
 	@Test
-	public void testPlayerGetAllInstances() {
+	public void testPlayerSearchByName() {
+		String name = "NAME";
+		String type = "TYPE";
+
 		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
 
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class)).hasSize(1)
-				.allMatch(instance -> instance.getActive() == true);
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byName/" + name,
+				InstanceBoundary[].class)).hasSize(1);
 	}
+
+	@Test
+	public void testNonExistingUserSearchByName() {
+		String name = "NAME";
+		String type = "TYPE";
+
+		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.testingFactory.createNewInstance(user.getUserId(), true, name, type);
+		this.testingFactory.createNewInstance(user.getUserId(), false, name, type);
+
+		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
+				"AVATAR", "USERNAME");
+
+		assertThrows(HttpClientErrorException.NotFound.class, () -> {
+			this.client.getForObject(this.url + requestingUser + "/search/byName/" + name, InstanceBoundary[].class);
+		});
+	}
+
 }

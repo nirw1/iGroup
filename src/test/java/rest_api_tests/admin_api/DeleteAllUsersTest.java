@@ -1,4 +1,4 @@
-package rest_api_tests_admin;
+package rest_api_tests.admin_api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -18,8 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import iob.Application;
 import iob.attributes.UserId;
-import iob.boundaries.InstanceBoundary;
-import iob.boundaries.InstanceIdBoundary;
 import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
 import iob.logic.TestingDaoService;
