@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,8 @@ public class DeleteAllInstancesTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -49,6 +52,12 @@ public class DeleteAllInstancesTest {
 		this.url = "http://localhost:" + this.port + "/iob/admin/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.testingFactory.createNewInstance(this.user.getUserId(), true);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -57,9 +66,6 @@ public class DeleteAllInstancesTest {
 
 	@Test
 	public void testAdminDeleteAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertDoesNotThrow(() -> {
@@ -70,9 +76,6 @@ public class DeleteAllInstancesTest {
 
 	@Test
 	public void testManagerDeleteAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -82,9 +85,6 @@ public class DeleteAllInstancesTest {
 
 	@Test
 	public void testPlayerDeleteAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -94,9 +94,6 @@ public class DeleteAllInstancesTest {
 
 	@Test
 	public void testNonExistingUserDeleteAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 

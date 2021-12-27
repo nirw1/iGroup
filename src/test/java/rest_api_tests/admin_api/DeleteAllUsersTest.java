@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +50,13 @@ public class DeleteAllUsersTest {
 		this.url = "http://localhost:" + this.port + "/iob/admin/users/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.testingFactory.createNewUser(UserRole.ADMIN);
+		this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.testingFactory.createNewUser(UserRole.PLAYER);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getUserDao().deleteAll();
@@ -56,10 +64,6 @@ public class DeleteAllUsersTest {
 
 	@Test
 	public void testAdminDeleteAllUsers() {
-		this.testingFactory.createNewUser(UserRole.ADMIN);
-		this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewUser(UserRole.PLAYER);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertDoesNotThrow(() -> {
@@ -70,10 +74,6 @@ public class DeleteAllUsersTest {
 
 	@Test
 	public void testManagerDeleteAllUsers() {
-		this.testingFactory.createNewUser(UserRole.ADMIN);
-		this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewUser(UserRole.PLAYER);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -83,10 +83,6 @@ public class DeleteAllUsersTest {
 
 	@Test
 	public void testPlayerDeleteAllUsers() {
-		this.testingFactory.createNewUser(UserRole.ADMIN);
-		this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewUser(UserRole.PLAYER);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -96,10 +92,6 @@ public class DeleteAllUsersTest {
 
 	@Test
 	public void testNonExistingUserDeleteAllUsers() {
-		this.testingFactory.createNewUser(UserRole.ADMIN);
-		this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewUser(UserRole.PLAYER);
-
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 

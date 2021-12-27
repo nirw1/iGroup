@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,10 @@ public class GetSpecificInstanceTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+	private InstanceBoundary activeInstance;
+	private InstanceBoundary inactiveInstance;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -48,6 +53,13 @@ public class GetSpecificInstanceTest {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.activeInstance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+		this.inactiveInstance = this.testingFactory.createNewInstance(this.user.getUserId(), false);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -56,65 +68,51 @@ public class GetSpecificInstanceTest {
 
 	@Test
 	public void testAdminGetActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class);
+			this.client.getForObject(this.url + requestingUser + this.activeInstance, InstanceBoundary.class);
 		});
 	}
 
 	@Test
 	public void testAdminGetInActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class);
+			this.client.getForObject(this.url + requestingUser + this.inactiveInstance, InstanceBoundary.class);
 		});
 	}
 
 	@Test
 	public void testManagerGetActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
+		assertThat(this.client.getForObject(this.url + requestingUser + this.activeInstance, InstanceBoundary.class))
+				.isNotNull();
 	}
 
 	@Test
 	public void testManagerGetInActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
+		assertThat(this.client.getForObject(this.url + requestingUser + this.inactiveInstance, InstanceBoundary.class))
+				.isNotNull();
 	}
 
 	@Test
 	public void testPlayerGetActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNotNull();
+		assertThat(this.client.getForObject(this.url + requestingUser + this.activeInstance, InstanceBoundary.class))
+				.isNotNull();
 	}
 
 	@Test
 	public void testPlayerGetInActiveInstance() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + instance, InstanceBoundary.class)).isNull();
+		assertThat(this.client.getForObject(this.url + requestingUser + this.inactiveInstance, InstanceBoundary.class))
+				.isNull();
 	}
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,8 @@ public class GetAllInstancesTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -48,6 +51,13 @@ public class GetAllInstancesTest {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.testingFactory.createNewInstance(this.user.getUserId(), true);
+		this.testingFactory.createNewInstance(this.user.getUserId(), false);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -56,10 +66,6 @@ public class GetAllInstancesTest {
 
 	@Test
 	public void testAdminGetAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
@@ -69,10 +75,6 @@ public class GetAllInstancesTest {
 
 	@Test
 	public void testManagerGetAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
 		assertThat(this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class)).hasSize(2);
@@ -80,10 +82,6 @@ public class GetAllInstancesTest {
 
 	@Test
 	public void testPlayerGetAllInstances() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		this.testingFactory.createNewInstance(user.getUserId(), true);
-		this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
 		assertThat(this.client.getForObject(this.url + requestingUser, InstanceBoundary[].class)).hasSize(1)

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,10 @@ public class UpdateInstanceTest {
 	@Autowired
 	private TestingFactory testingFactory;
 
+	private UserBoundary user;
+	private InstanceBoundary instance;
+	private InstanceBoundary newInstance;
+
 	private RestTemplate client;
 	private String url;
 	private int port;
@@ -49,6 +54,12 @@ public class UpdateInstanceTest {
 		this.url = "http://localhost:" + this.port + "/iob/instances/";
 	}
 
+	@BeforeEach
+	public void before() {
+		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.instance = this.testingFactory.createNewInstance(this.user.getUserId(), true);
+	}
+
 	@AfterEach
 	public void after() {
 		this.testingService.getInstanceDao().deleteAll();
@@ -57,65 +68,56 @@ public class UpdateInstanceTest {
 
 	@Test
 	public void testAdminUpdate() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary newInstance = this.testingFactory.createNewInstance(user.getUserId(), false);
-		newInstance.setInstanceId(null);
-
 		UserBoundary updatingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
+		this.newInstance = this.testingFactory.createNewInstance(this.user.getUserId(), false);
+		this.newInstance.setInstanceId(null);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.put(this.url + updatingUser + instance, newInstance);
+			this.client.put(this.url + updatingUser + this.instance, this.newInstance);
 		});
 	}
 
 	@Test
 	public void testManagerUpdate() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
 		UserBoundary updatingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
+		this.newInstance = this.testingFactory.createNewInstance(updatingUser.getUserId(), false);
+		this.newInstance.setInstanceId(null);
 
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary newInstance = this.testingFactory.createNewInstance(updatingUser.getUserId(), false);
-		newInstance.setInstanceId(null);
+		this.client.put(this.url + updatingUser + this.instance, this.newInstance);
 
-		this.client.put(this.url + updatingUser + instance, newInstance);
+		this.newInstance = this.client.getForObject(this.url + this.user + this.instance, InstanceBoundary.class);
 
-		newInstance = this.client.getForObject(this.url + user + instance, InstanceBoundary.class);
+		assertThat(this.instance.getInstanceId().equals(this.newInstance.getInstanceId())).isTrue();
+		assertThat(this.instance.getCreatedTimestamp().equals(this.newInstance.getCreatedTimestamp())).isTrue();
+		assertThat(this.instance.getCreatedBy().equals(this.newInstance.getCreatedBy())).isTrue();
 
-		assertThat(instance.getInstanceId().equals(newInstance.getInstanceId())).isTrue();
-		assertThat(instance.getCreatedTimestamp().equals(newInstance.getCreatedTimestamp())).isTrue();
-		assertThat(instance.getCreatedBy().equals(newInstance.getCreatedBy())).isTrue();
-
-		assertThat(instance.getActive().equals(newInstance.getActive())).isFalse();
-		assertThat(instance.getLocation().equals(newInstance.getLocation())).isFalse();
-		assertThat(instance.getName().equals(newInstance.getName())).isFalse();
-		assertThat(instance.getType().equals(newInstance.getType())).isFalse();
+		assertThat(this.instance.getActive().equals(this.newInstance.getActive())).isFalse();
+		assertThat(this.instance.getLocation().equals(this.newInstance.getLocation())).isFalse();
+		assertThat(this.instance.getName().equals(this.newInstance.getName())).isFalse();
+		assertThat(this.instance.getType().equals(this.newInstance.getType())).isFalse();
 
 	}
 
 	@Test
 	public void testPlayerUpdate() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary newInstance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary updatingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
+		this.newInstance = this.testingFactory.createNewInstance(this.user.getUserId(), false);
+		this.newInstance.setInstanceId(null);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.put(this.url + updatingUser + instance, newInstance);
+			this.client.put(this.url + updatingUser + this.instance, this.newInstance);
 		});
 	}
 
 	@Test
 	public void testNonExistingUser() {
-		UserBoundary user = this.testingFactory.createNewUser(UserRole.MANAGER);
-		InstanceBoundary instance = this.testingFactory.createNewInstance(user.getUserId(), true);
-		InstanceBoundary newInstance = this.testingFactory.createNewInstance(user.getUserId(), false);
-
 		UserBoundary updatingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER, "AVATAR",
 				"USERNAME");
+		this.newInstance = this.testingFactory.createNewInstance(this.user.getUserId(), false);
+		this.newInstance.setInstanceId(null);
+
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.put(this.url + updatingUser + instance, newInstance);
+			this.client.put(this.url + updatingUser + this.instance, this.newInstance);
 		});
 	}
 }
