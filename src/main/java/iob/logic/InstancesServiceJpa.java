@@ -306,4 +306,14 @@ public class InstancesServiceJpa implements EnhancedInstancesWithChildrenService
 
 		return result;
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@RolePermission(roles = { UserRole.MANAGER, UserRole.PLAYER })
+	public List<InstanceBoundary> getByNameContaining(String userDomain, String userEmail, String name, int page, int size) {
+		List<InstanceBoundary> result = this.instanceDao
+				.findAllByNameContaining(name, PageRequest.of(page, size, Direction.DESC, "name")).stream()
+				.map(this.converter::convertToBoundary).collect(Collectors.toList());
+		return result;
+	}
 }

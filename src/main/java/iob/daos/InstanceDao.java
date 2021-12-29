@@ -29,5 +29,7 @@ public interface InstanceDao extends PagingAndSortingRepository<InstanceEntity, 
 	
 	public List<InstanceEntity> findAllByCreatedTimestampGreaterThanEqual(Date date, Pageable pageable);
 	
+	public List<InstanceEntity> findAllByNameContaining(String name, Pageable pageable);
+	
 	
 }
