@@ -58,7 +58,7 @@ public class SearchInstancesByNameContainingTest {
 	@BeforeEach
 	public void before() {
 		this.name = "NAME";
-		this.half_name = "NA";
+		this.half_name = "na";
 		this.type = "TYPE";
 		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
 		this.testingFactory.createNewInstance(this.user.getUserId(), true, this.name, this.type);
