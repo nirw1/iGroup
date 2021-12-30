@@ -20,5 +20,7 @@ public interface EnhancedInstancesWithChildrenService extends InstancesWithChild
 
 	List<InstanceBoundary> getByCreationTime(String userDomain, String userEmail, String creationWindow, int page,
 			int size);
+	
+	List<InstanceBoundary> getByNameContaining(String userDomain, String userEmail, String name, int page, int size);
 
 }
