@@ -23,37 +23,24 @@ public class UserRelatedController {
 		this.usersService = usersService;
 	}
 
-	@RequestMapping(
-			path = "/iob/users",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE
-	)
+	@RequestMapping(path = "/iob/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UserBoundary createUser(@RequestBody NewUserBoundary newUser) {
-		UserId userId = new UserId(null, newUser.getEmail()); 
+		UserId userId = new UserId(null, newUser.getEmail().toLowerCase());
 		UserBoundary userBoundry = new UserBoundary(userId, newUser.getRole(), newUser.getUsername(),
 				newUser.getAvatar());
 		return this.usersService.createUser(userBoundry);
 	}
 
-	@RequestMapping(
-			path = "/iob/users/login/{userDomain}/{userEmail}",
-			method = RequestMethod.GET,
-			produces = MediaType.APPLICATION_JSON_VALUE
-	)
+	@RequestMapping(path = "/iob/users/login/{userDomain}/{userEmail}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserBoundary loginUser(@PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		return this.usersService.login(userDomain, userEmail);
+		return this.usersService.login(userDomain, userEmail.toLowerCase());
 	}
 
-	@RequestMapping(
-			path = "/iob/users/{userDomain}/{userEmail}",
-			method = RequestMethod.PUT,
-			consumes = MediaType.APPLICATION_JSON_VALUE
-	)
+	@RequestMapping(path = "/iob/users/{userDomain}/{userEmail}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void updateUser(@RequestBody UserBoundary user, @PathVariable("userDomain") String userDomain,
 			@PathVariable("userEmail") String userEmail) {
-		this.usersService.updateUser(userDomain, userEmail, user);
+		this.usersService.updateUser(userDomain, userEmail.toLowerCase(), user);
 	}
 
 }
