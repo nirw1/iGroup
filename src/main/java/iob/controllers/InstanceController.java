@@ -117,6 +117,18 @@ public class InstanceController {
 	}
 	
 	@RequestMapping(
+			path = "/iob/instances/{userDomain}/{userEmail}/search/byNameContaining/{name}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE
+	)
+	public InstanceBoundary[] searchByNameContaining(@PathVariable("userDomain") String userDomain,
+			@PathVariable("userEmail") String userEmail, @PathVariable("name") String name,
+			@RequestParam(name="page", required=false, defaultValue = "0") int page,
+			@RequestParam(name="size", required=false, defaultValue = "10") int size) {
+		return instancesService.getByNameContaining(userDomain, userEmail, name, page, size).toArray(new InstanceBoundary[0]);
+	}
+	
+	@RequestMapping(
 			path = "/iob/instances/{userDomain}/{userEmail}/search/byType/{type}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE

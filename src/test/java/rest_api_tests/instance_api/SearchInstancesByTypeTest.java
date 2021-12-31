@@ -58,6 +58,7 @@ public class SearchInstancesByTypeTest {
 	public void before() {
 		this.name = "NAME";
 		this.type = "TYPE";
+
 		this.user = this.testingFactory.createNewUser(UserRole.MANAGER);
 		this.testingFactory.createNewInstance(this.user.getUserId(), true, this.name, this.type);
 		this.testingFactory.createNewInstance(this.user.getUserId(), false, this.name, this.type);
@@ -70,38 +71,38 @@ public class SearchInstancesByTypeTest {
 	}
 
 	@Test
-	public void testAdminSearchByName() {
+	public void testAdminSearchByType() {
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.ADMIN);
 
 		assertThrows(HttpClientErrorException.Forbidden.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byName/" + this.name,
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 					InstanceBoundary[].class);
 		});
 	}
 
 	@Test
-	public void testManagerSearchByName() {
+	public void testManagerSearchByType() {
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.MANAGER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byName/" + this.name,
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 				InstanceBoundary[].class)).hasSize(2);
 	}
 
 	@Test
-	public void testPlayerSearchByName() {
+	public void testPlayerSearchByType() {
 		UserBoundary requestingUser = this.testingFactory.createNewUser(UserRole.PLAYER);
 
-		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byName/" + this.name,
+		assertThat(this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 				InstanceBoundary[].class)).hasSize(1);
 	}
 
 	@Test
-	public void testNonExistingUserSearchByName() {
+	public void testNonExistingUserSearchByType() {
 		UserBoundary requestingUser = new UserBoundary(new UserId("DOMAIN", "EMAIL@MAIL.COM"), UserRole.MANAGER,
 				"AVATAR", "USERNAME");
 
 		assertThrows(HttpClientErrorException.NotFound.class, () -> {
-			this.client.getForObject(this.url + requestingUser + "/search/byName/" + this.name,
+			this.client.getForObject(this.url + requestingUser + "/search/byType/" + this.type,
 					InstanceBoundary[].class);
 		});
 	}
