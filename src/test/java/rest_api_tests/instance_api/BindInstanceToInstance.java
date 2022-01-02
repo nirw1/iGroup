@@ -29,7 +29,7 @@ import iob.tests_helpers.TestingDaoService;
 import iob.tests_helpers.TestingFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
-@Profile("Testing")
+@Profile("testing")
 public class BindInstanceToInstance {
 
 	@Autowired

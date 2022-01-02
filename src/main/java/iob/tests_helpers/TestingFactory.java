@@ -19,7 +19,7 @@ import iob.boundaries.UserBoundary;
 import iob.data.UserRole;
 
 @Component
-@Profile("Testing")
+@Profile("testing")
 public class TestingFactory {
 	private RestTemplate client;
 	private AtomicLong id;

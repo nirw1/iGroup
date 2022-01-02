@@ -9,7 +9,7 @@ import iob.daos.InstanceDao;
 import iob.daos.UserDao;
 
 @Component
-@Profile("Testing")
+@Profile("testing")
 public class TestingDaoService {
 	private UserDao userDao;
 	private ActivityDao activityDao;
